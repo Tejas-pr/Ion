@@ -1,0 +1,19 @@
+{
+  "name": "@ion/auth",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "better-auth": "^1.4.18"
+  },
+  "exports": {
+    "./client": "./src/client.ts",
+    "./auth": "./src/auth.ts"
+  }
+}
