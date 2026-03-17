@@ -34,3 +34,6 @@ apps/web/.env
 
 # turbo
 .turbo
+generated
+dist
+./dist
