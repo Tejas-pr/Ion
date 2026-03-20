@@ -1,0 +1,19 @@
+{
+  "name": "ion-aws",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@repo/typescript-config": "*",
+    "@aws-sdk/client-s3": "^3.1014.0"
+  },
+  "exports": {
+    "./aws": "./src/index.ts"
+  }
+}
