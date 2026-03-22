@@ -53,6 +53,7 @@
         "cors": "^2.8.6",
         "express": "^5.2.1",
         "ion-aws": "*",
+        "ion-common": "*",
         "redis": "^5.11.0",
         "simple-git": "^3.33.0",
       },
@@ -80,6 +81,18 @@
       "dependencies": {
         "@aws-sdk/client-s3": "^3.1014.0",
         "@repo/typescript-config": "*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
+    "packages/ion-common": {
+      "name": "ion-common",
+      "dependencies": {
+        "redis": "^5.11.0",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -1509,6 +1522,8 @@
     "ion": ["ion@workspace:apps/ion"],
 
     "ion-aws": ["ion-aws@workspace:packages/ion-aws"],
+
+    "ion-common": ["ion-common@workspace:packages/ion-common"],
 
     "ion-repo-service": ["ion-repo-service@workspace:apps/ion-repo-service"],
 

@@ -17,7 +17,8 @@
     "express": "^5.2.1",
     "redis": "^5.11.0",
     "simple-git": "^3.33.0",
-    "ion-aws": "*"
+    "ion-aws": "*",
+    "ion-common": "*"
   },
   "devDependencies": {
     "@types/bun": "latest"

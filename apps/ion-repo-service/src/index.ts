@@ -11,6 +11,7 @@ import simpleGit from "simple-git";
 import path from "path";
 import { generateRandomString } from "./generateRandom";
 import { uploadDirectory } from "ion-aws/aws";
+import { LPUSH } from "ion-common/redis";
 
 const app = express();
 app.use(cors());
@@ -33,7 +34,7 @@ app.post("/deploy", async (req, res) => {
     await uploadDirectory(outputPath, id);
 
     // push the ID to QUEUE
-
+    LPUSH("ion-build-queue", id);
 
     res.json({
         success: true,
