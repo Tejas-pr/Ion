@@ -1,6 +1,4 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getAllFiles } from "./general-functions";
-import path from "path";
+import { GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fs from "fs";
 
 const accessKey = process.env.CLOUDFLARE_ACCESS_KEY!;
@@ -17,8 +15,7 @@ const s3Client = new S3Client({
     }
 });
 
-const uploadFileS3 = async (fileName: string, localFilePath: string) => {
-    console.log("uploadFileS3");
+export const uploadFileS3 = async (fileName: string, localFilePath: string) => {
     const fileStream = fs.createReadStream(localFilePath);
 
     await s3Client.send(
@@ -30,15 +27,24 @@ const uploadFileS3 = async (fileName: string, localFilePath: string) => {
     );
 };
 
-export const uploadDirectory = async (dirPath: string, projectId: string) => {
-    console.log("uploadDirectory");
-    const files = getAllFiles(dirPath);
+// this will list all the files of this folderID
+export const getFilesFromS3Folder = async (folderId: string) => {
+    const command = new ListObjectsV2Command({
+        Bucket: bucketName,
+        Prefix: `${folderId}/`,
+    });
 
-    await Promise.all(
-        files.map((filePath) => {
-            const relativePath = path.relative(dirPath, filePath);
-            const s3Key = `${projectId}/${relativePath.replace(/\\/g, "/")}`;
-            return uploadFileS3(s3Key, filePath);
-        })
-    )
+    const response = await s3Client.send(command);
+
+    return response.Contents || [];
 };
+
+// this will get file.
+export const getFileContents = async (key: string) => {
+    const command = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: key
+    })
+    const response = await s3Client.send(command);
+    return response.Body;
+}

@@ -45,6 +45,10 @@
     },
     "apps/ion-deployment-service": {
       "name": "ion-deployment-service",
+      "dependencies": {
+        "ion-aws": "*",
+        "ion-common": "*",
+      },
       "devDependencies": {
         "@repo/typescript-config": "*",
         "@types/bun": "latest",

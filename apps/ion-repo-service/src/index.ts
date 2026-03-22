@@ -10,8 +10,8 @@ import cors from "cors";
 import simpleGit from "simple-git";
 import path from "path";
 import { generateRandomString } from "./generateRandom";
-import { uploadDirectory } from "ion-aws/aws";
-import { LPUSH } from "ion-common/redis";
+import { LPUSH, REDIS_QUEUE_NAME } from "ion-common/redis";
+import { uploadDirectory } from "./aws";
 
 const app = express();
 app.use(cors());
@@ -19,6 +19,8 @@ app.use(express.json());
 
 app.post("/deploy", async (req, res) => {
     const repoUrl = req.body.url;
+    console.log("hit");
+    console.log(repoUrl);
 
     if (!repoUrl) {
         res.status(400).json({
@@ -32,9 +34,10 @@ app.post("/deploy", async (req, res) => {
 
     // upload to S3
     await uploadDirectory(outputPath, id);
+    console.log("uploadFileS3 - 01");
 
     // push the ID to QUEUE
-    LPUSH("ion-build-queue", id);
+    LPUSH(REDIS_QUEUE_NAME, id);
 
     res.json({
         success: true,
