@@ -43,6 +43,16 @@
         "typescript": "^5",
       },
     },
+    "apps/ion-deployment-service": {
+      "name": "ion-deployment-service",
+      "devDependencies": {
+        "@repo/typescript-config": "*",
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "apps/ion-repo-service": {
       "name": "ion-repo-service",
       "dependencies": {
@@ -62,6 +72,16 @@
       },
       "peerDependencies": {
         "typescript": "^5.9.3",
+      },
+    },
+    "apps/ion-request-service": {
+      "name": "ion-request-service",
+      "devDependencies": {
+        "@repo/typescript-config": "*",
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
       },
     },
     "packages/ion-auth": {
@@ -1525,7 +1545,11 @@
 
     "ion-common": ["ion-common@workspace:packages/ion-common"],
 
+    "ion-deployment-service": ["ion-deployment-service@workspace:apps/ion-deployment-service"],
+
     "ion-repo-service": ["ion-repo-service@workspace:apps/ion-repo-service"],
+
+    "ion-request-service": ["ion-request-service@workspace:apps/ion-request-service"],
 
     "ip-address": ["ip-address@10.0.1", "", {}, "sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA=="],
 
