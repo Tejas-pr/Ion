@@ -9,9 +9,10 @@ import express from "express";
 import cors from "cors";
 import simpleGit from "simple-git";
 import path from "path";
+import fs from "fs";
 import { generateRandomString } from "./generateRandom";
 import { LPUSH, REDIS_QUEUE_NAME } from "ion-common/redis";
-import { uploadDirectory } from "./aws";
+import { uploadDirectory } from "ion-aws/general-functions";
 
 const app = express();
 app.use(cors());
@@ -33,8 +34,12 @@ app.post("/deploy", async (req, res) => {
     await simpleGit().clone(repoUrl, outputPath); // what to clone and where to clone.
 
     // upload to S3
-    await uploadDirectory(outputPath, id);
+    await uploadDirectory(outputPath, `clones/${id}`);
     console.log("uploadFileS3 - 01");
+
+    // remove from local machine
+    await fs.promises.rm(outputPath, { recursive: true, force: true });
+    console.log("cleaned up local files in repo service");
 
     // push the ID to QUEUE
     LPUSH(REDIS_QUEUE_NAME, id);
