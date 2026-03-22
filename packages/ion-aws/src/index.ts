@@ -16,13 +16,13 @@ const s3Client = new S3Client({
 });
 
 export const uploadFileS3 = async (fileName: string, localFilePath: string) => {
-    const fileStream = fs.createReadStream(localFilePath);
+    const fileContent = fs.readFileSync(localFilePath);
 
     await s3Client.send(
         new PutObjectCommand({
             Bucket: bucketName,
             Key: fileName,
-            Body: fileStream,
+            Body: fileContent,
         }),
     );
 };

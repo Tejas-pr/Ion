@@ -6,8 +6,8 @@
 */
 
 import { BRPPO, REDIS_QUEUE_NAME } from "ion-common/redis";
-import { buildProject } from "./builder";
 import { getFileFromS3 } from "./aws";
+import { buildProject } from "./builder";
 
 const main = async () => {
     console.log("inside");
@@ -21,13 +21,16 @@ const main = async () => {
         }
 
         // download the project from S3
-        const res = await getFileFromS3(id);
-        console.log("sdflsdfjkl",res);
+        const ProjectPath = await getFileFromS3(id);
 
         // build the project
-        // await buildProject();
+        await buildProject(ProjectPath);
 
         // push the built project to S3 into /dist folder of the id.
+        // await uploadDirectory(
+        //         path.join(projectPath, "dist"),
+        //         `${id}/dist`
+        //     );
     }
 }
 

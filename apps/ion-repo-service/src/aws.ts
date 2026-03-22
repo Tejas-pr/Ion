@@ -12,6 +12,7 @@ export const uploadDirectory = async (dirPath: string, projectId: string) => {
             return uploadFileS3(s3Key, filePath);
         })
     )
+    console.log("getting and merging files");
 };
 
 const getAllFiles = (dirPath: string, arrayOfFiles: string[] = []) => {

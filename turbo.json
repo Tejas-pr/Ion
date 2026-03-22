@@ -21,7 +21,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": ["SSH_AUTH_SOCK", "SSH_AGENT_PID"]
     },
     "generate": {
       "dependsOn": ["^generate"],
