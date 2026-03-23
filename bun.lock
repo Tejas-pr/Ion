@@ -80,6 +80,12 @@
     },
     "apps/ion-request-service": {
       "name": "ion-request-service",
+      "dependencies": {
+        "@types/express": "^5.0.6",
+        "cors": "^2.8.6",
+        "express": "^5.2.1",
+        "ion-aws": "*",
+      },
       "devDependencies": {
         "@repo/typescript-config": "*",
         "@types/bun": "latest",

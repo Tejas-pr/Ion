@@ -3,7 +3,7 @@ import fs from "fs";
 
 const accessKey = process.env.CLOUDFLARE_ACCESS_KEY!;
 const secretAccess = process.env.CLOUDFLARE_SECRET_KEY!;
-const bucketName = process.env.BUCKET_NAME;
+export const bucketName = process.env.BUCKET_NAME;
 const endPoint = process.env.S3_API;
 
 const s3Client = new S3Client({
