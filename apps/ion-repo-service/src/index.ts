@@ -5,7 +5,7 @@
         pick the ID from and continue the process.
 */
 
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 dotenv.config({ path: "../../.env" });
 
 import express from "express";
@@ -16,21 +16,36 @@ import fs from "fs";
 import { generateRandomString } from "./generateRandom";
 import { LPUSH, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { uploadDirectory } from "ion-aws/general-functions";
-import { middlewareService } from "ion-common/middleware-service";
 import { prisma } from "@ion/database";
+import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+
+const { auth } = await import("@ion/auth/auth");
 
 const app = express();
+
+app.all(/\/api\/auth\/.*/, toNodeHandler(auth));
+
 app.use(cors({
-    origin: true, // Specifically allows any origin dynamically, required because wildcard '*' is not allowed when withCredentials is true
+    origin: true,
     credentials: true,
 }));
-app.use(middlewareService);
 app.use(express.json());
 
 app.post("/deploy", async (req, res) => {
+    const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session?.user?.id) {
+        return res.status(401).json({
+            success: false,
+            message: "Unauthorized!",
+        });
+    }
+
+    const userId = session.user.id;
     const name = req.body.name;
     const repoUrl = req.body.url;
-    const userId = (req as any).userId as string;
 
     if (!repoUrl || !name || !userId) {
         res.status(400).json({

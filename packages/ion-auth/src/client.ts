@@ -6,5 +6,5 @@ export const authClient = createAuthClient({
     baseURL: BASE_URL
 })
 
-export const { signIn, signUp, useSession, signOut } = createAuthClient()
+export const { signIn, signUp, useSession, signOut, getSession } = createAuthClient()
 export { fromNodeHeaders, toNodeHandler } from "better-auth/node";

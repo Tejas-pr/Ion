@@ -4,30 +4,90 @@
     3. Return that file to the client in the formate of html to serve in the browser.
 */
 
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 dotenv.config({ path: "../../.env" });
 
-import fs from "fs";
-import path from "path";
 import express from "express";
 import cors from "cors";
 import { getFileContents } from "ion-aws/aws"
-import { middlewareService } from "ion-common/middleware-service";
+import { prisma } from "@ion/database";
+import { renderNotFound } from "./template";
+import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+import { allowedOrigins } from "ion-common/redis";
+const { auth } = await import("@ion/auth/auth");
 
 const app = express();
-app.use(cors());
-app.use(middlewareService);
+
+app.all(/\/api\/auth\/.*/, toNodeHandler(auth));
+
+app.use(
+    cors({
+        origin: allowedOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
+);
+
+app.get("/api/me", async (req, res) => {
+    const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+    });
+    return res.json(session);
+});
+
 app.use(express.json());
 
-app.get(/(.*)/, async (req, res) => {
-    // You can now access the user ID injected by the middleware
-    const userId = (req as any).userId as string;
+app.get('/workspace', async (req, res) => {
+    const userId = (await getUserSession(req, res))?.user?.id;
+    console.log("userIduserId", userId);
 
+    const projects = await prisma.project.findMany({
+        where: {
+            userId,
+        },
+    });
+
+    return res.status(200).json({
+        success: true,
+        projects,
+    });
+});
+
+app.get('/project/:id', async (req, res) => {
+    const id = req.params.id;
+    const userId = (await getUserSession(req, res))?.user?.id;
+
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Please provide project id!",
+        });
+    }
+
+    const project = await prisma.project.findUnique({
+        where: {
+            projectId: id,
+            userId,
+        },
+    });
+
+    if (!project) {
+        return res.status(404).json({
+            success: false,
+            message: "Project not found!",
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        project,
+    });
+});
+
+app.get(/(.*)/, async (req, res) => {
     const host = req.hostname;
-    // For example: "id.ion.com" -> "id"
     const id = host.split(".")[0];
 
-    // Default to /index.html if root path is accessed
     let filePath = req.path;
     if (filePath === "/") {
         filePath = "/index.html";
@@ -44,7 +104,6 @@ app.get(/(.*)/, async (req, res) => {
 
         res.set("Content-Type", type);
 
-        // Pipe the AWS SDK stream response to the express response
         if (contents) {
             // @ts-ignore
             contents.pipe(res);
@@ -56,15 +115,13 @@ app.get(/(.*)/, async (req, res) => {
     }
 });
 
-function renderNotFound(filePath: string) {
-    const template = fs.readFileSync(
-        path.join(__dirname, "template/not-found.html"),
-        "utf-8"
-    );
-
-    return template.replace("{{PATH}}", filePath);
-}
-
 app.listen(process.env.REQUEST_BACKEND_PORT || 3003, () => {
     console.log("Request service is running on port", process.env.REQUEST_BACKEND_PORT || 3003);
 });
+
+const getUserSession = async (req: any, res: any) => {
+    const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+    });
+    return session;
+}

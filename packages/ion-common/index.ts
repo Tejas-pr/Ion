@@ -13,3 +13,6 @@ export const BRPPO = async (key: string, timeout: number = 0) => {
     const res = await client.brPop(key, timeout);
     return res;
 }
+
+
+export const allowedOrigins = ["http://localhost:3000", process.env.FRONTEND_URL!];
