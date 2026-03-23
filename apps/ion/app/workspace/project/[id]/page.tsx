@@ -59,7 +59,29 @@ export default function ProjectDetailsPage() {
     };
 
     ws.onmessage = (event) => {
-      setLogs((prev) => [...prev, event.data]);
+      try {
+        const data = JSON.parse(event.data);
+        if (data.status) {
+          if (data.status === "SUCCESS" && project?.status !== "SUCCESS") {
+            playSuccessSound();
+          }
+          setProject((prev: any) =>
+            prev ? { ...prev, status: data.status } : prev,
+          );
+        }
+        if (data.message) {
+          setLogs((prev) => [...prev, data.message]);
+        }
+      } catch (e) {
+        setLogs((prev) => [...prev, event.data]);
+      }
+    };
+
+    const playSuccessSound = () => {
+      const audio = new Audio(
+        "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3",
+      );
+      audio.play().catch((e) => console.error("Failed to play sound:", e));
     };
 
     ws.onclose = () => {

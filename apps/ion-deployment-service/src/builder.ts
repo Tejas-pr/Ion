@@ -24,12 +24,12 @@ const runDockerBuild = (projectPath: string, projectId: string) => {
         ]);
 
         docker.stdout.on("data", (data) => {
-            process.stdout.write(data.toString());
+            // process.stdout.write(data.toString());
             PUBLISH("ion-broadcast", JSON.stringify({ projectId, message: data.toString() }));
         });
 
         docker.stderr.on("data", (data) => {
-            process.stderr.write(data.toString());
+            // process.stderr.write(data.toString());
             PUBLISH("ion-broadcast", JSON.stringify({ projectId, message: data.toString() }));
         });
 

@@ -33,9 +33,9 @@ export const startServer = async () => {
     // Listen for broadcast requests from other services via Redis
     await SUBSCRIBE("ion-broadcast", (data: string) => {
         try {
-            const { projectId, message } = JSON.parse(data);
-            if (projectId && message) {
-                broadcast(projectId, message);
+            const parsed = JSON.parse(data);
+            if (parsed.projectId) {
+                broadcast(parsed.projectId, data);
             }
         } catch (e) {
             console.error("Failed to parse Redis broadcast message:", e);

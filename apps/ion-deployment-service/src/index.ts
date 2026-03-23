@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../../.env" });
 
 import path from "path";
-import { BRPPO, REDIS_QUEUE_NAME } from "ion-common/redis";
+import { BRPPO, REDIS_QUEUE_NAME, PUBLISH } from "ion-common/redis";
 import { buildProject } from "./builder";
 import { getFileFromS3, uploadDirectory } from "ion-aws/general-functions";
 import { safeCleanup } from "./cleaner";
@@ -31,6 +31,7 @@ const main = async () => {
                 where: { projectId: id },
                 data: { status: "BUILDING" }
             });
+            await PUBLISH("ion-broadcast", JSON.stringify({ projectId: id, status: "BUILDING" }));
 
             // download the project from S3
             const localOutputDir = path.join(__dirname, "output", id);
@@ -44,6 +45,7 @@ const main = async () => {
                 where: { projectId: id },
                 data: { status: "DEPLOYING" }
             });
+            await PUBLISH("ion-broadcast", JSON.stringify({ projectId: id, status: "DEPLOYING" }));
 
             // push the built project to S3 into /dist folder of the id.
             await uploadDirectory(path.join(projectPath, "dist"), `dist/${id}`);
@@ -53,6 +55,7 @@ const main = async () => {
                 where: { projectId: id },
                 data: { status: "SUCCESS" }
             });
+            await PUBLISH("ion-broadcast", JSON.stringify({ projectId: id, status: "SUCCESS" }));
 
             // remove from local machine
             await safeCleanup(localOutputDir);
@@ -62,6 +65,7 @@ const main = async () => {
                 where: { projectId: id },
                 data: { status: "FAILED" }
             });
+            await PUBLISH("ion-broadcast", JSON.stringify({ projectId: id, status: "FAILED" }));
         }
     }
 }
