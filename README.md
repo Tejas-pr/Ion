@@ -1,8 +1,9 @@
-🎥 Demo video coming soon...
-
 # Ion ⚡
 
 Ion is a high-performance, self-hosted deployment platform designed for modern web applications. Inspired by the architecture of Vercel, Ion automates the process of cloning, building, and serving static React/Vite applications at scale using a distributed, microservices-based approach.
+
+# Demo Video
+https://github.com/user-attachments/assets/11751ab2-3c4f-41f4-bf56-e0374eb6a1b6
 
 ## 🏗️ Architecture Overview
 
