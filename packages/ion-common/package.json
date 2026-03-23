@@ -4,15 +4,19 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@ion/database": "workspace:*",
+    "express": "^5.2.1",
     "redis": "^5.11.0"
   },
   "exports": {
-    "./redis": "./index.ts"
+    "./redis": "./index.ts",
+    "./middleware-service": "./middleware-service.ts"
   }
 }

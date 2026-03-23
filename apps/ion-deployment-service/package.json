@@ -16,7 +16,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "ion-common": "*",
-    "ion-aws": "*"
+    "dotenv": "^17.3.1",
+    "ion-aws": "*",
+    "ion-common": "*"
   }
 }

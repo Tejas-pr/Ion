@@ -5,6 +5,9 @@
     4. The final built output final push to the S3 again (only dist files).
 */
 
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+
 import path from "path";
 import { BRPPO, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { buildProject } from "./builder";

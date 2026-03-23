@@ -43,10 +43,7 @@ export function MainContent() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAddProject = (newProject: {
-    name: string;
-    link: string;
-  }) => {
+  const handleAddProject = (newProject: { name: string; link: string }) => {
     const project = {
       id: Math.max(...projects.map((p) => p.id), 0) + 1,
       name: newProject.name,
@@ -67,10 +64,7 @@ export function MainContent() {
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-8 py-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Projects</h1>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="gap-2"
-          >
+          <Button onClick={() => setIsModalOpen(true)} className="gap-2">
             <Plus className="w-4 h-4" />
             Add New Project
           </Button>

@@ -5,6 +5,9 @@
         pick the ID from and continue the process.
 */
 
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+
 import express from "express";
 import cors from "cors";
 import simpleGit from "simple-git";
@@ -13,35 +16,52 @@ import fs from "fs";
 import { generateRandomString } from "./generateRandom";
 import { LPUSH, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { uploadDirectory } from "ion-aws/general-functions";
+import { middlewareService } from "ion-common/middleware-service";
+import { prisma } from "@ion/database";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: true, // Specifically allows any origin dynamically, required because wildcard '*' is not allowed when withCredentials is true
+    credentials: true,
+}));
+app.use(middlewareService);
 app.use(express.json());
 
 app.post("/deploy", async (req, res) => {
+    const name = req.body.name;
     const repoUrl = req.body.url;
-    console.log("hit");
-    console.log(repoUrl);
+    const userId = (req as any).userId as string;
 
-    if (!repoUrl) {
+    if (!repoUrl || !name || !userId) {
         res.status(400).json({
             success: false,
-            message: "Please provide url!",
+            message: "Please provide url, project name and user id!",
         });
     }
     const id = generateRandomString();
+    if (!id) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to generate random string!",
+        });
+    }
+
+    await prisma.project.create({
+        data: {
+            projectId: id,
+            name: name,
+            repoUrl,
+            userId,
+        }
+    });
+
     const outputPath = path.join(__dirname, `output/${id}`);
-    await simpleGit().clone(repoUrl, outputPath); // what to clone and where to clone.
+    await simpleGit().clone(repoUrl, outputPath);
 
-    // upload to S3
     await uploadDirectory(outputPath, `clones/${id}`);
-    console.log("uploadFileS3 - 01");
 
-    // remove from local machine
     await fs.promises.rm(outputPath, { recursive: true, force: true });
-    console.log("cleaned up local files in repo service");
 
-    // push the ID to QUEUE
     LPUSH(REDIS_QUEUE_NAME, id);
 
     res.json({
@@ -50,4 +70,6 @@ app.post("/deploy", async (req, res) => {
     });
 });
 
-app.listen(process.env.REPO_BACKEND_PORT || 3002);
+app.listen(process.env.REPO_BACKEND_PORT || 3002, () => {
+    console.log("Repo service is running on port", process.env.REPO_BACKEND_PORT || 3002);
+});

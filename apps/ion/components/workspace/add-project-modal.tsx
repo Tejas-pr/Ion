@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { addNewProject } from "@/api/api.service";
 
 interface AddProjectModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export function AddProjectModal({
   const [projectLink, setProjectLink] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -34,20 +35,25 @@ export function AddProjectModal({
     }
 
     // Validate URL format
-    try {
-      new URL(projectLink);
-    } catch {
-      setError("Please enter a valid URL");
+    const isValidUrl =
+      projectLink.startsWith("http") || projectLink.startsWith("git@");
+    if (!isValidUrl) {
+      setError("Please enter a valid HTTP or Git SSH URL");
       return;
     }
 
-    onAddProject({
-      name: projectName.trim(),
-      link: projectLink.trim(),
-    });
-
-    setProjectName("");
-    setProjectLink("");
+    try {
+      await addNewProject(projectName.trim(), projectLink.trim());
+      setProjectName("");
+      setProjectLink("");
+      onClose();
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+          "Failed to add project. Please check if the backend is running.",
+      );
+      return;
+    }
   };
 
   if (!isOpen) return null;
@@ -57,7 +63,9 @@ export function AddProjectModal({
       <div className="bg-card text-card-foreground border border-border rounded-lg shadow-lg w-full max-w-md mx-4 p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-foreground">Add New Project</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            Add New Project
+          </h2>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -89,7 +97,7 @@ export function AddProjectModal({
               Git Repository Link
             </label>
             <input
-              type="url"
+              type="text"
               value={projectLink}
               onChange={(e) => setProjectLink(e.target.value)}
               placeholder="e.g., https://github.com/username/repo"
@@ -114,10 +122,7 @@ export function AddProjectModal({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="flex-1"
-            >
+            <Button type="submit" className="flex-1">
               Add Project
             </Button>
           </div>

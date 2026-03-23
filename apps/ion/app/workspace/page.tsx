@@ -1,4 +1,5 @@
 import { Workspace } from "@/components/workspace";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata = {
   title: "Workspace",
@@ -6,5 +7,14 @@ export const metadata = {
 };
 
 export default function WorkspacePage() {
-  return <Workspace />;
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <Workspace />
+    </ThemeProvider>
+  );
 }

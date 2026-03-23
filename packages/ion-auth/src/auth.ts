@@ -8,9 +8,7 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    emailAndPassword: {
-        enabled: true,
-    },
+    baseURL: process.env.BETTER_AUTH_URL as string,
     trustedOrigins: trustedOrigins,
     socialProviders: {
         github: {
@@ -22,9 +20,6 @@ export const auth = betterAuth({
         cookieCache: {
             enabled: true,
             maxAge: 60 * 60 * 24, // 1 day
-            refreshCache: {
-                updateAge: 300 // Refresh when 5 mins remain before expiry
-            }
         }
     }
 });

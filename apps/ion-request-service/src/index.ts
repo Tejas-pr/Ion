@@ -4,17 +4,25 @@
     3. Return that file to the client in the formate of html to serve in the browser.
 */
 
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+
 import fs from "fs";
 import path from "path";
 import express from "express";
 import cors from "cors";
 import { getFileContents } from "ion-aws/aws"
+import { middlewareService } from "ion-common/middleware-service";
 
 const app = express();
 app.use(cors());
+app.use(middlewareService);
 app.use(express.json());
 
 app.get(/(.*)/, async (req, res) => {
+    // You can now access the user ID injected by the middleware
+    const userId = (req as any).userId as string;
+
     const host = req.hostname;
     // For example: "id.ion.com" -> "id"
     const id = host.split(".")[0];
@@ -49,12 +57,14 @@ app.get(/(.*)/, async (req, res) => {
 });
 
 function renderNotFound(filePath: string) {
-  const template = fs.readFileSync(
-    path.join(__dirname, "template/not-found.html"),
-    "utf-8"
-  );
+    const template = fs.readFileSync(
+        path.join(__dirname, "template/not-found.html"),
+        "utf-8"
+    );
 
-  return template.replace("{{PATH}}", filePath);
+    return template.replace("{{PATH}}", filePath);
 }
 
-app.listen(process.env.REQUEST_BACKEND_PORT || 3003);
+app.listen(process.env.REQUEST_BACKEND_PORT || 3003, () => {
+    console.log("Request service is running on port", process.env.REQUEST_BACKEND_PORT || 3003);
+});
