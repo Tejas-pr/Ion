@@ -1,12 +1,13 @@
 import { spawn } from "child_process";
+import { PUBLISH } from "ion-common/redis";
 
-export const buildProject = async (projectPath: string) => {
+export const buildProject = async (projectPath: string, projectId: string) => {
     console.log("Starting Docker build...");
-    await runDockerBuild(projectPath);
+    await runDockerBuild(projectPath, projectId);
     console.log("Build finished");
 };
 
-const runDockerBuild = (projectPath: string) => {
+const runDockerBuild = (projectPath: string, projectId: string) => {
     console.log("projectPath", projectPath);
 
     return new Promise<void>((resolve, reject) => {
@@ -24,10 +25,12 @@ const runDockerBuild = (projectPath: string) => {
 
         docker.stdout.on("data", (data) => {
             process.stdout.write(data.toString());
+            PUBLISH("ion-broadcast", JSON.stringify({ projectId, message: data.toString() }));
         });
 
         docker.stderr.on("data", (data) => {
             process.stderr.write(data.toString());
+            PUBLISH("ion-broadcast", JSON.stringify({ projectId, message: data.toString() }));
         });
 
         docker.on("close", (code) => {

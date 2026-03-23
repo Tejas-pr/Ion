@@ -7,3 +7,6 @@ export const REPO_BACKEND_URL =
 export const REQUEST_BACKEND_URL = rawRequestUrl;
 
 export const BASE_URL = rawRequestUrl.replace(/^https?:\/\//, "");
+
+export const WEBSOCKET_URL =
+    process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:8081";

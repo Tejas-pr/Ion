@@ -37,7 +37,7 @@ const main = async () => {
             const projectPath = await getFileFromS3(`clones/${id}`, localOutputDir);
 
             // build the project
-            await buildProject(projectPath);
+            await buildProject(projectPath, id);
 
             // Update status to DEPLOYING
             await prisma.project.update({

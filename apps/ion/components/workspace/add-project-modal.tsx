@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addNewProject } from "@/api/api.service";
+import { useRouter } from "next/navigation";
 
 interface AddProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddProject: (project: { name: string; link: string }) => void;
+  onAddProject: (project: any) => void;
 }
 
 export function AddProjectModal({
@@ -16,6 +17,7 @@ export function AddProjectModal({
   onClose,
   onAddProject,
 }: AddProjectModalProps) {
+  const router = useRouter();
   const [projectName, setProjectName] = useState("");
   const [projectLink, setProjectLink] = useState("");
   const [error, setError] = useState("");
@@ -53,16 +55,17 @@ export function AddProjectModal({
         projectLink.trim(),
       );
 
-      // Clear fields
-      setProjectName("");
-      setProjectLink("");
-
       // Notify parent to update UI
       if (onAddProject) {
         onAddProject(response.project);
       }
 
+      setProjectName("");
+      setProjectLink("");
       onClose();
+
+      // Redirect to deployment page
+      router.push(`/workspace/project/${response.project.projectId}`);
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
