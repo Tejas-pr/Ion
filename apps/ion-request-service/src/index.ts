@@ -17,7 +17,7 @@ app.use(express.json());
 app.get(/(.*)/, async (req, res) => {
     const host = req.hostname;
     // For example: "id.ion.com" -> "id"
-    const id = host.split(".")[0].toUpperCase();
+    const id = host.split(".")[0];
 
     // Default to /index.html if root path is accessed
     let filePath = req.path;

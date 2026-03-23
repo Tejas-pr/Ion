@@ -5,18 +5,16 @@
     4. The final built output final push to the S3 again (only dist files).
 */
 
-import fs from "fs";
 import path from "path";
 import { BRPPO, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { buildProject } from "./builder";
 import { getFileFromS3, uploadDirectory } from "ion-aws/general-functions";
+import { safeCleanup } from "./cleaner";
 
 const main = async () => {
-    console.log("inside");
     while (1) {
         const queueRes = await BRPPO(REDIS_QUEUE_NAME);
         const id = queueRes?.element;
-        console.log("from queue id: ", id);
 
         if (!id) {
             return;
@@ -29,14 +27,11 @@ const main = async () => {
         // build the project
         await buildProject(projectPath);
 
-        console.log("projectPath", projectPath);
-
         // push the built project to S3 into /dist folder of the id.
         await uploadDirectory(path.join(projectPath, "dist"), `dist/${id}`);
 
         // remove from local machine
-        await fs.promises.rm(localOutputDir, { recursive: true, force: true });
-        console.log("cleaned up local files in deployment service");
+        await safeCleanup(localOutputDir);
     }
 }
 

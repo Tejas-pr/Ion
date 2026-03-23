@@ -1,14 +1,11 @@
 import crypto from "crypto";
 
-const CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const CHARSET = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-export const generateRandomString = (length = 6): string => {
-    let result = "";
+export const generateRandomString = (length = 7): string => {
     const bytes = crypto.randomBytes(length);
 
-    for (let index = 0; index < length; index++) {
-        result += CHARSET[bytes[index] % CHARSET.length];
-    }
-
-    return result;
-}
+    return Array.from(bytes)
+        .map(b => CHARSET[b % CHARSET.length])
+        .join("");
+};
