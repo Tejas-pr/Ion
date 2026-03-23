@@ -14,6 +14,7 @@ import { BRPPO, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { buildProject } from "./builder";
 import { getFileFromS3, uploadDirectory } from "ion-aws/general-functions";
 import { safeCleanup } from "./cleaner";
+import { prisma } from "@ion/database";
 
 const main = async () => {
     while (1) {
@@ -21,21 +22,47 @@ const main = async () => {
         const id = queueRes?.element;
 
         if (!id) {
-            return;
+            continue;
         }
 
-        // download the project from S3
-        const localOutputDir = path.join(__dirname, "output", id);
-        const projectPath = await getFileFromS3(`clones/${id}`, localOutputDir);
+        try {
+            // Update status to BUILDING
+            await prisma.project.update({
+                where: { projectId: id },
+                data: { status: "BUILDING" }
+            });
 
-        // build the project
-        await buildProject(projectPath);
+            // download the project from S3
+            const localOutputDir = path.join(__dirname, "output", id);
+            const projectPath = await getFileFromS3(`clones/${id}`, localOutputDir);
 
-        // push the built project to S3 into /dist folder of the id.
-        await uploadDirectory(path.join(projectPath, "dist"), `dist/${id}`);
+            // build the project
+            await buildProject(projectPath);
 
-        // remove from local machine
-        await safeCleanup(localOutputDir);
+            // Update status to DEPLOYING
+            await prisma.project.update({
+                where: { projectId: id },
+                data: { status: "DEPLOYING" }
+            });
+
+            // push the built project to S3 into /dist folder of the id.
+            await uploadDirectory(path.join(projectPath, "dist"), `dist/${id}`);
+
+            // Update status to SUCCESS
+            await prisma.project.update({
+                where: { projectId: id },
+                data: { status: "SUCCESS" }
+            });
+
+            // remove from local machine
+            await safeCleanup(localOutputDir);
+        } catch (error) {
+            console.error("Deployment failed for ID:", id, error);
+            await prisma.project.update({
+                where: { projectId: id },
+                data: { status: "FAILED" }
+            });
+        }
     }
 }
 

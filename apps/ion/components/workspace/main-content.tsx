@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "./project-card";
 import { AddProjectModal } from "./add-project-modal";
-import { getWorkspaceDetails, addNewProject } from "@/api/api.service";
+import { getWorkspaceDetails } from "@/api/api.service";
 
 export function MainContent() {
   const [projects, setProjects] = useState<any>([]);
@@ -21,17 +21,10 @@ export function MainContent() {
     setProjects(data.projects || []);
   };
 
-  const handleAddProject = async (newProject: {
-    name: string;
-    link: string;
-  }) => {
-    try {
-      await addNewProject(newProject.name, newProject.link);
-      await fetchWorkspaceDetails();
-    } catch (error) {
-      console.error("Failed to add project:", error);
+  const handleAddProject = (project: any) => {
+    if (project) {
+      setProjects((prev: any) => [...prev, project]);
     }
-    setIsModalOpen(false);
   };
 
   return (

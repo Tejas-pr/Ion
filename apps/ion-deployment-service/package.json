@@ -18,6 +18,7 @@
   "dependencies": {
     "dotenv": "^17.3.1",
     "ion-aws": "*",
-    "ion-common": "*"
+    "ion-common": "*",
+    "@ion/database": "*"
   }
 }

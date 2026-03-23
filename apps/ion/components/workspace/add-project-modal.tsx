@@ -19,18 +19,22 @@ export function AddProjectModal({
   const [projectName, setProjectName] = useState("");
   const [projectLink, setProjectLink] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     if (!projectName.trim()) {
       setError("Project name is required");
+      setIsSubmitting(false);
       return;
     }
 
     if (!projectLink.trim()) {
       setError("Project link is required");
+      setIsSubmitting(false);
       return;
     }
 
@@ -39,20 +43,33 @@ export function AddProjectModal({
       projectLink.startsWith("http") || projectLink.startsWith("git@");
     if (!isValidUrl) {
       setError("Please enter a valid HTTP or Git SSH URL");
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      await addNewProject(projectName.trim(), projectLink.trim());
+      const response = await addNewProject(
+        projectName.trim(),
+        projectLink.trim(),
+      );
+
+      // Clear fields
       setProjectName("");
       setProjectLink("");
+
+      // Notify parent to update UI
+      if (onAddProject) {
+        onAddProject(response.project);
+      }
+
       onClose();
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
           "Failed to add project. Please check if the backend is running.",
       );
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -122,8 +139,8 @@ export function AddProjectModal({
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1">
-              Add Project
+            <Button type="submit" className="flex-1" disabled={isSubmitting}>
+              {isSubmitting ? "Deploying..." : "Deploy"}
             </Button>
           </div>
         </form>

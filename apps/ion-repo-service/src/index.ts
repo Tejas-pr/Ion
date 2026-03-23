@@ -61,28 +61,48 @@ app.post("/deploy", async (req, res) => {
         });
     }
 
-    await prisma.project.create({
+    const project = await prisma.project.create({
         data: {
             projectId: id,
             name: name,
             repoUrl,
             userId,
+            status: "CLONING",
         }
     });
 
-    const outputPath = path.join(__dirname, `output/${id}`);
-    await simpleGit().clone(repoUrl, outputPath);
-
-    await uploadDirectory(outputPath, `clones/${id}`);
-
-    await fs.promises.rm(outputPath, { recursive: true, force: true });
-
-    LPUSH(REDIS_QUEUE_NAME, id);
-
+    // Return immediately to the frontend
     res.json({
         success: true,
         id,
+        project,
     });
+
+    // Handle cloning/uploading in the background
+    (async () => {
+        try {
+            const outputPath = path.join(__dirname, `output/${id}`);
+            await simpleGit().clone(repoUrl, outputPath);
+
+            await uploadDirectory(outputPath, `clones/${id}`);
+
+            await fs.promises.rm(outputPath, { recursive: true, force: true });
+
+            // update status to IN_QUEUE before pushing to redis
+            await prisma.project.update({
+                where: { id: project.id },
+                data: { status: "IN_QUEUE" }
+            });
+
+            LPUSH(REDIS_QUEUE_NAME, id);
+        } catch (error) {
+            console.error("Cloning or uploading failed for project:", id, error);
+            await prisma.project.update({
+                where: { id: project.id },
+                data: { status: "FAILED" }
+            });
+        }
+    })();
 });
 
 app.listen(process.env.REPO_BACKEND_PORT || 3002, () => {

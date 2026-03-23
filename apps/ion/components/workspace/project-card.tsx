@@ -11,6 +11,7 @@ interface ProjectCardProps {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  status: string;
 }
 
 export function ProjectCard({
@@ -21,6 +22,7 @@ export function ProjectCard({
   createdAt,
   updatedAt,
   userId,
+  status,
 }: ProjectCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -30,6 +32,24 @@ export function ProjectCard({
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  // Status badge styles
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case "SUCCESS":
+        return "bg-green-500/10 text-green-500 border-green-500/20";
+      case "FAILED":
+        return "bg-red-500/10 text-red-500 border-red-500/20";
+      case "IN_QUEUE":
+        return "bg-slate-500/10 text-slate-500 border-slate-500/20";
+      case "BUILDING":
+      case "DEPLOYING":
+      case "CLONING":
+        return "bg-blue-500/10 text-blue-500 border-blue-500/20 animate-pulse";
+      default:
+        return "bg-primary/10 text-primary border-primary/20";
+    }
   };
 
   // Extract repo name from URL if possible
@@ -49,8 +69,10 @@ export function ProjectCard({
             <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
               {name}
             </h3>
-            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium uppercase tracking-wider">
-              Active
+            <span
+              className={`px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-all duration-500 ${getStatusStyles(status)}`}
+            >
+              {status}
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
