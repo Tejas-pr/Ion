@@ -1,60 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "./project-card";
 import { AddProjectModal } from "./add-project-modal";
+import { getWorkspaceDetails, addNewProject } from "@/api/api.service";
 
 export function MainContent() {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: "Ion",
-      description: "No Production Deployment",
-      repo: "Tejas-pr/ion",
-      link: "https://github.com/Tejas-pr/ion",
-      status: "no-deployment",
-      lastUpdate: "58s ago",
-      branch: "main",
-    },
-    {
-      id: 2,
-      name: "sketchly",
-      description: "drawing.tejasr.site",
-      repo: "Tejas-pr/sketchly",
-      link: "https://github.com/Tejas-pr/sketchly",
-      status: "deployed",
-      lastUpdate: "Feb 5 on master",
-      branch: "master",
-    },
-    {
-      id: 3,
-      name: "space-ts-landingpage",
-      description: "space-ts-landingpage.vercel.app",
-      repo: "Tejas-pr/space-ts",
-      link: "https://github.com/Tejas-pr/space-ts",
-      status: "deployed",
-      lastUpdate: "12/3/24 on master",
-      branch: "master",
-    },
-  ]);
+  const [projects, setProjects] = useState<any>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAddProject = (newProject: { name: string; link: string }) => {
-    const project = {
-      id: Math.max(...projects.map((p) => p.id), 0) + 1,
-      name: newProject.name,
-      description: "Recently added",
-      repo: newProject.link.split("/").slice(-2).join("/"),
-      link: newProject.link,
-      status: "pending",
-      lastUpdate: "just now",
-      branch: "main",
-    };
-    setProjects([...projects, project]);
+  useEffect(() => {
+    fetchWorkspaceDetails();
+  }, []);
+
+  const fetchWorkspaceDetails = async () => {
+    const data = await getWorkspaceDetails();
+    setProjects(data.projects || []);
+  };
+
+  const handleAddProject = async (newProject: {
+    name: string;
+    link: string;
+  }) => {
+    try {
+      await addNewProject(newProject.name, newProject.link);
+      await fetchWorkspaceDetails();
+    } catch (error) {
+      console.error("Failed to add project:", error);
+    }
     setIsModalOpen(false);
   };
 
@@ -81,7 +57,7 @@ export function MainContent() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map((project: any) => (
               <ProjectCard key={project.id} {...project} />
             ))}
           </div>
