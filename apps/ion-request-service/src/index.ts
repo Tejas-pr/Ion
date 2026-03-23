@@ -4,6 +4,8 @@
     3. Return that file to the client in the formate of html to serve in the browser.
 */
 
+import fs from "fs";
+import path from "path";
 import express from "express";
 import cors from "cors";
 import { getFileContents } from "ion-aws/aws"
@@ -39,12 +41,20 @@ app.get(/(.*)/, async (req, res) => {
             // @ts-ignore
             contents.pipe(res);
         } else {
-            res.status(404).send("Not Found");
+            res.status(404).send(renderNotFound(filePath));
         }
     } catch (error) {
-        console.error("Error fetching file:", error);
-        res.status(404).send("Not Found");
+        res.status(404).send(renderNotFound(filePath));
     }
 });
+
+function renderNotFound(filePath: string) {
+  const template = fs.readFileSync(
+    path.join(__dirname, "template/not-found.html"),
+    "utf-8"
+  );
+
+  return template.replace("{{PATH}}", filePath);
+}
 
 app.listen(process.env.REQUEST_BACKEND_PORT || 3003);
