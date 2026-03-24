@@ -3,6 +3,7 @@
 Ion is a high-performance, self-hosted deployment platform designed for modern web applications. Inspired by the architecture of Vercel, Ion automates the process of cloning, building, and serving static React/Vite applications at scale using a distributed, microservices-based approach.
 
 # Demo Video
+
 https://github.com/user-attachments/assets/11751ab2-3c4f-41f4-bf56-e0374eb6a1b6
 
 ## 🏗️ Architecture Overview
@@ -173,13 +174,156 @@ The services will start on the following ports:
 5.  **Listen**: Hear the retro "Achievement Unlock" sound when the build finishes.
 6.  **Visit**: Click "View Deployed" to see your app live on its own unique subdomain.
 
-## 🔮 Future Improvements
+## 🔮 Future Improvements – TODO
 
 - [ ] Support for private Git repositories via SSH keys/Deploy keys.
 - [ ] Incremental builds and build caching.
 - [ ] Custom domain support (CNAME mapping).
 - [ ] Environment variable management per-project from the UI.
 - [ ] Deployment rollbacks and version history.
+- [ ] Directly connect to the gihub to fetch all the repos from the github users.
+
+## ✅ CI/CD Integration (Jenkins)
+
+- [ ] Set up Jenkins using Docker for local development
+- [ ] Create Jenkinsfile with pipeline stages (install, test, build, dockerize, deploy)
+- [ ] Configure GitHub webhook to trigger builds automatically
+- [ ] Store build metadata (status, duration, logs) in database
+
+---
+
+## 🐳 Dockerization
+
+- [ ] Write Dockerfile for backend service
+- [ ] Write Dockerfile for frontend service
+- [ ] Create docker-compose.yml for all services (app, Jenkins, Prometheus, Grafana)
+- [ ] Use multi-stage builds to optimize image size
+
+---
+
+## 📊 Metrics Collection (Prometheus)
+
+- [ ] Set up Prometheus for metrics scraping
+- [ ] Add /metrics endpoint in backend (Express/Node)
+- [ ] Track API latency, request count, error rate
+- [ ] Monitor system metrics (CPU, memory)
+- [ ] Configure Prometheus scrape targets
+
+---
+
+## 📈 Visualization (Grafana)
+
+- [ ] Set up Grafana and connect Prometheus as data source
+- [ ] Create dashboards for:
+  - [ ] CI/CD pipeline status
+  - [ ] Build success vs failure trends
+  - [ ] Deployment frequency
+  - [ ] System performance metrics
+- [ ] Configure alerts (Slack or Email)
+
+---
+
+## 🤖 AI Failure Analysis (LLM)
+
+- [ ] Capture Jenkins logs for failed builds
+- [ ] Send logs to LLM API for analysis
+- [ ] Generate failure summary, root cause, and suggested fixes
+- [ ] Store AI insights in database
+- [ ] Display AI insights in dashboard
+
+---
+
+## 🗄️ Backend Enhancements
+
+- [ ] Design database schema (builds, deployments, logs, metrics)
+- [ ] Implement APIs to fetch pipeline data and logs
+- [ ] Implement APIs to fetch metrics and AI insights
+
+---
+
+## 🖥️ Frontend Dashboard
+
+- [ ] Display pipeline runs and build statuses
+- [ ] Show logs with filtering/search
+- [ ] Add charts for:
+  - [ ] Success/failure trends
+  - [ ] Build duration
+- [ ] Show AI-generated summaries for failures
+
+---
+
+## 🔔 Alerts & Notifications
+
+- [ ] Trigger alerts on build failures
+- [ ] Trigger alerts on high error rates
+- [ ] Integrate Slack or Email notifications
+
+---
+
+## 🌐 Deployment & Infrastructure
+
+- [ ] Deploy services using Docker (EC2 or VPS)
+- [ ] Set up NGINX as reverse proxy
+- [ ] Configure environment variables and secrets
+- [ ] Secure services and endpoints
+
+---
+
+## 🧪 Bonus Features (Optional)
+
+- [ ] Auto-retry failed builds
+- [ ] Canary deployments
+- [ ] Role-based access control (RBAC)
+- [ ] Multi-project support
+- [ ] Uptime monitoring
+
+---
+
+# NEXT IN FUTURE.
+
+## 🔄 GitOps (Modern Deployment Strategy)
+
+- [ ] Set up GitOps workflow for deployments (separate infra repo)
+- [ ] Store Kubernetes manifests (YAML) in Git
+- [ ] Auto-sync deployments on Git changes
+- [ ] Implement environment-based configs (dev/staging/prod)
+- [ ] Maintain version-controlled infrastructure
+
+---
+
+## ☸️ Kubernetes (Container Orchestration)
+
+- [ ] Set up local Kubernetes cluster (Minikube / k3s)
+- [ ] Write Kubernetes manifests:
+  - [ ] Deployment (app pods)
+  - [ ] Service (expose app)
+  - [ ] Ingress (routing)
+- [ ] Deploy application to Kubernetes cluster
+- [ ] Configure auto-scaling (Horizontal Pod Autoscaler)
+- [ ] Manage configs using ConfigMaps and Secrets
+- [ ] Compare Docker vs Kubernetes deployment in docs
+
+---
+
+## 🚀 Argo CD (GitOps Deployment Tool)
+
+- [ ] Install Argo CD in Kubernetes cluster
+- [ ] Connect Argo CD to Git repository
+- [ ] Enable automatic sync of manifests to cluster
+- [ ] Visualize application state via Argo CD dashboard
+- [ ] Implement rollback using Git history
+- [ ] Manage multiple environments (dev/staging/prod)
+- [ ] Secure Argo CD access (authentication)
+
+---
+
+## 🔐 Kubernetes Security & Best Practices
+
+- [ ] Use Secrets for sensitive data (avoid hardcoding)
+- [ ] Implement RBAC for cluster access control
+- [ ] Set resource limits (CPU/memory) for pods
+- [ ] Enable liveness and readiness probes
+- [ ] Restrict container privileges (securityContext)
 
 ---
 
