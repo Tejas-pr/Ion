@@ -47,6 +47,17 @@ app.post("/deploy", async (req, res) => {
     const name = req.body.name;
     const repoUrl = req.body.url;
 
+    const existingUser = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    if (!existingUser) {
+        return res.status(400).json({
+            success: false,
+            message: "User not found in database",
+        });
+    }
+
     if (!repoUrl || !name || !userId) {
         res.status(400).json({
             success: false,

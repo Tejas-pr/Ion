@@ -1,6 +1,7 @@
 import { prisma } from "@ion/database";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import "./fetch-fix";
 
 const trustedOrigins = [process.env.BETTER_AUTH_URL as string, process.env.MAINORIGINS2 as string, process.env.MAINORIGINS3 as string]
 

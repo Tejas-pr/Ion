@@ -11,6 +11,9 @@ const runDockerBuild = (projectPath: string, projectId: string) => {
     console.log("projectPath", projectPath);
 
     return new Promise<void>((resolve, reject) => {
+        const uid = process.getuid?.() || 1000;
+        const gid = process.getgid?.() || 1000;
+
         const docker = spawn("docker", [
             "run",
             "--rm",
@@ -20,7 +23,7 @@ const runDockerBuild = (projectPath: string, projectId: string) => {
             "node:20",
             "sh",
             "-c",
-            "rm -rf node_modules && node -v && npm -v && npm install --verbose && npm run build"
+            `rm -rf node_modules && node -v && npm -v && npm install --verbose && npm run build && chown -R ${uid}:${gid} .`
         ]);
 
         docker.stdout.on("data", (data) => {

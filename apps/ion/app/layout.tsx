@@ -17,11 +17,12 @@ export const metadata: Metadata = {
   title: "Ion - Build the Web",
   description:
     "The complete platform to build, deploy, and scale modern web applications",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
