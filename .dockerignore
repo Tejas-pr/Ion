@@ -67,4 +67,3 @@ docker-compose*
 # Custom agent folders (as you mentioned)
 .agent
 **/.agent
-
