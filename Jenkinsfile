@@ -5,7 +5,6 @@ pipeline {
         stage('Setup') {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
-                // Inject credentials right at the start
                 withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DB_URL')]) {
                     sh "DATABASE_URL=${DB_URL} bun install"
                     sh "DATABASE_URL=${DB_URL} bun run generate"
@@ -13,26 +12,26 @@ pipeline {
             }
         }
 
-        stage('Build & Dockerize') {
+        stage('Build') {
             steps {
                 sh 'bun run build'
-                parallel(
-                    "Build Ion": { sh 'docker build -t ion-app ./apps/ion' },
-                    "Build Repo": { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' },
-                    "Build Deployment": { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' },
-                    "Build Request": { sh 'docker build -t ion-request-service ./apps/ion-request-service' },
-                    "Build Websocket": { sh 'docker build -t ion-websocket ./apps/ion-websocket' }
-                )
             }
         }
-    }
 
-    post {
-        always {
-            script {
-                // node {} Ensures we have a workspace to run shell scripts
-                node {
-                    echo 'Recording build metadata to Database...'
+        stage('Dockerize') {
+            parallel {
+                stage('Ion') { steps { sh 'docker build -t ion-app ./apps/ion' } }
+                stage('Repo') { steps { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' } }
+                stage('Deployment') { steps { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' } }
+                stage('Request') { steps { sh 'docker build -t ion-request-service ./apps/ion-request-service' } }
+                stage('Websocket') { steps { sh 'docker build -t ion-websocket ./apps/ion-websocket' } }
+            }
+        }
+
+        stage('Update Database Metadata') {
+            steps {
+                script {
+                    echo 'Recording build details to Postgres...'
                     withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'URL')]) {
                         sh """
                             cd packages/ion-db
