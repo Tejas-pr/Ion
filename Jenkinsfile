@@ -54,8 +54,14 @@ pipeline {
     post {
         always {
             echo 'Recording build metadata to Database...'
-            // This script will be created in the next phase
-            sh "bun run --filter @ion/database db:record-build --status=${currentBuild.result ?: 'SUCCESS'} --duration=${currentBuild.duration} --commit=${sh(script: 'git rev-parse HEAD', returnStdout: true).trim()}"
+            // We move into the package folder to ensure Prisma finds the client
+            sh """
+                cd packages/ion-db
+                bun run db:record-build \
+                --status=${currentBuild.result ?: 'SUCCESS'} \
+                --duration=${currentBuild.duration} \
+                --commit=\$(git rev-parse HEAD)
+            """
         }
         success {
             echo 'Pipeline Succeeded!'
