@@ -5,9 +5,10 @@ pipeline {
         stage('Setup') {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
-                withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DB_URL')]) {
-                    sh "DATABASE_URL=${DB_URL} bun install"
-                    sh "DATABASE_URL=${DB_URL} bun run generate"
+                // We name the variable DATABASE_URL so Turbo picks it up automatically!
+                withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
+                    sh 'bun install'
+                    sh 'bun run generate'
                 }
             }
         }
@@ -32,10 +33,10 @@ pipeline {
             steps {
                 script {
                     echo 'Recording build details to Postgres...'
-                    withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'URL')]) {
+                    withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
                         sh """
                             cd packages/ion-db
-                            DATABASE_URL=${URL} bun run db:record-build \
+                            bun run db:record-build \
                             --status=${currentBuild.result ?: 'SUCCESS'} \
                             --duration=${currentBuild.duration} \
                             --commit=\$(git rev-parse HEAD)
