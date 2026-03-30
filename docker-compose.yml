@@ -17,6 +17,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
   jenkins:
     build: ./infrastructure/jenkins
+    user: root
     container_name: jenkins
     ports:
       - "8080:8080"
