@@ -10,8 +10,9 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                echo 'Installing Dependencies...'
+                echo 'Installing Dependencies & Generating Prisma Client...'
                 sh 'bun install'
+                sh 'bun run generate'
             }
         }
 
@@ -39,6 +40,12 @@ pipeline {
                 }
                 stage('Build Deployment Service') {
                     steps { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' }
+                }
+                stage('Build Request Service') {
+                    steps { sh 'docker build -t ion-request-service ./apps/ion-request-service' }
+                }
+                stage('Build Websocket Service') {
+                    steps { sh 'docker build -t ion-websocket ./apps/ion-websocket' }
                 }
             }
         }
