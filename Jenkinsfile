@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Pulls from the credential you created in the UI
-        DATABASE_URL = credentials('DATABASE_URL')
-        TURBO_TOKEN = "" 
+        // Use the ID from your Jenkins Credentials UI
+        DB_URL = credentials('DATABASE_URL')
     }
 
     stages {
@@ -12,20 +11,19 @@ pipeline {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
                 sh 'bun install'
-                sh 'bun run generate'
+                // Pass the DB URL explicitly to Prisma during generation
+                sh "DATABASE_URL=${DB_URL} bun run generate"
             }
         }
 
         stage('Lint & Type Check') {
             steps {
-                echo 'Verifying code quality...'
                 sh 'bun run lint'
             }
         }
 
         stage('Build Packages & Apps') {
             steps {
-                echo 'Building with Turborepo...'
                 sh 'bun run build'
             }
         }
@@ -35,16 +33,16 @@ pipeline {
                 stage('Build Ion') {
                     steps { sh 'docker build -t ion-app ./apps/ion' }
                 }
-                stage('Build Repo Service') {
+                stage('Build Repo') {
                     steps { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' }
                 }
-                stage('Build Deployment Service') {
+                stage('Build Deployment') {
                     steps { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' }
                 }
-                stage('Build Request Service') {
+                stage('Build Request') {
                     steps { sh 'docker build -t ion-request-service ./apps/ion-request-service' }
                 }
-                stage('Build Websocket Service') {
+                stage('Build Websocket') {
                     steps { sh 'docker build -t ion-websocket ./apps/ion-websocket' }
                 }
             }
@@ -53,21 +51,20 @@ pipeline {
 
     post {
         always {
-            echo 'Recording build metadata to Database...'
-            // We move into the package folder to ensure Prisma finds the client
-            sh """
-                cd packages/ion-db
-                bun run db:record-build \
-                --status=${currentBuild.result ?: 'SUCCESS'} \
-                --duration=${currentBuild.duration} \
-                --commit=\$(git rev-parse HEAD)
-            """
-        }
-        success {
-            echo 'Pipeline Succeeded!'
-        }
-        failure {
-            echo 'Pipeline Failed. Check logs for details.'
+            script {
+                echo 'Recording build metadata to Database...'
+                // We wrap this in a node block to ensure we have a machine
+                node('built-in' || 'master' || 'any') {
+                    checkout scm
+                    sh """
+                        cd packages/ion-db
+                        DATABASE_URL=${DB_URL} bun run db:record-build \
+                        --status=${currentBuild.result ?: 'SUCCESS'} \
+                        --duration=${currentBuild.duration} \
+                        --commit=\$(git rev-parse HEAD)
+                    """
+                }
+            }
         }
     }
 }
