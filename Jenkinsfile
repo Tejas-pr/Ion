@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Points to the DB service in your docker-compose network
-        DATABASE_URL = "postgresql://ion:ion@db:5432/ion"
-        TURBO_TOKEN = "" // Add if using Remote Caching
+        // Pulls from the credential you created in the UI
+        DATABASE_URL = credentials('DATABASE_URL')
+        TURBO_TOKEN = "" 
     }
 
     stages {
