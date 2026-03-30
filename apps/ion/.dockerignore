@@ -5,3 +5,72 @@ dist
 build
 .env
 .env.local
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+**/.next
+dist
+**/dist
+build
+**/build
+out
+**/out
+
+# Turbo cache
+.turbo
+**/.turbo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE / Editor
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing / coverage
+coverage
+**/coverage
+
+# Misc
+*.log
+*.tsbuildinfo
+
+# Docker files themselves (optional)
+Dockerfile*
+docker-compose*
+
+# Package manager caches
+.pnpm-store
+.npm
+.yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Turbo / Vercel / misc tooling
+.vercel
+.cache
+
+# Custom agent folders (as you mentioned)
+.agent
+**/.agent

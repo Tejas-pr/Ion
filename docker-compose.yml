@@ -1,19 +1,75 @@
-version: "3"
-
 volumes:
-  database:
+  postgres_data:
     driver: local
 
 services:
   db:
     platform: linux/amd64
-    image: postgres:15 # Use a specific version of Postgres
+    image: postgres:15
     restart: always
     environment:
-      - POSTGRES_USER=sebi
-      - POSTGRES_PASSWORD=sebi_test_4444
-      - POSTGRES_DB=turborepo
+      - POSTGRES_USER=ion
+      - POSTGRES_PASSWORD=ion
+      - POSTGRES_DB=ion
     ports:
-      - '5432:5432' # Expose the Postgres port to your local machine
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  jenkins:
+    build: ./infrastructure/jenkins
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  ion-repo-service:
+    build:
+      context: .
+      dockerfile: apps/ion-repo-service/Dockerfile
+    container_name: ion-repo-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - db
+      - redis
+
+  ion-request-service:
+    build:
+      context: .
+      dockerfile: apps/ion-request-service/Dockerfile
+    container_name: ion-request-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - db
+      - redis
+
+  ion-websocket:
+    build:
+      context: .
+      dockerfile: apps/ion-websocket/Dockerfile
+    container_name: ion-websocket
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+
+  ion-deployment-service:
+    build:
+      context: .
+      dockerfile: apps/ion-deployment-service/Dockerfile
+    container_name: ion-deployment-service
+    depends_on:
+      - db
+      - redis

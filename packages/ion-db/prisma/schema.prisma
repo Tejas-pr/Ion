@@ -97,3 +97,12 @@ enum ProjectStatus {
   SUCCESS
   FAILED
 }
+
+model Build {
+  id         String   @id @default(cuid())
+  status     String // e.g., "SUCCESS", "FAILURE"
+  duration   Int // in milliseconds
+  commitHash String
+  logs       String?
+  createdAt  DateTime @default(now())
+}

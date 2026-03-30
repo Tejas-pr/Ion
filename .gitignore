@@ -37,3 +37,4 @@ apps/web/.env
 generated
 dist
 ./dist
+jenkins_data
