@@ -7,7 +7,7 @@ pipeline {
                 echo 'Installing Dependencies & Generating Prisma Client...'
                 // We name the variable DATABASE_URL so Turbo picks it up automatically!
                 withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
-                    sh 'bun install'
+                    sh 'bun install --allow-scripts'
                     sh 'bun run generate'
                 }
             }
