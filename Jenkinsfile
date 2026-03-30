@@ -1,47 +1,49 @@
 pipeline {
     agent any
 
-    environment {
-        // Points to Jenkins Credential ID 'DATABASE_URL'
-        DATABASE_URL = credentials('DATABASE_URL')
-    }
-
     stages {
         stage('Setup') {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
-                sh 'bun install'
-                sh 'bun run generate'
+                // Inject credentials right at the start
+                withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DB_URL')]) {
+                    sh "DATABASE_URL=${DB_URL} bun install"
+                    sh "DATABASE_URL=${DB_URL} bun run generate"
+                }
             }
         }
 
-        stage('Build & Test') {
+        stage('Build & Dockerize') {
             steps {
                 sh 'bun run build'
-            }
-        }
-
-        stage('Dockerize Services') {
-            parallel {
-                stage('Build Ion') { steps { sh 'docker build -t ion-app ./apps/ion' } }
-                stage('Build Repo') { steps { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' } }
-                stage('Build Deployment') { steps { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' } }
-                stage('Build Request') { steps { sh 'docker build -t ion-request-service ./apps/ion-request-service' } }
-                stage('Build Websocket') { steps { sh 'docker build -t ion-websocket ./apps/ion-websocket' } }
+                parallel(
+                    "Build Ion": { sh 'docker build -t ion-app ./apps/ion' },
+                    "Build Repo": { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' },
+                    "Build Deployment": { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' },
+                    "Build Request": { sh 'docker build -t ion-request-service ./apps/ion-request-service' },
+                    "Build Websocket": { sh 'docker build -t ion-websocket ./apps/ion-websocket' }
+                )
             }
         }
     }
 
     post {
         always {
-            echo 'Recording build metadata to Database...'
-            sh """
-                cd packages/ion-db
-                bun run db:record-build \
-                --status=${currentBuild.result ?: 'SUCCESS'} \
-                --duration=${currentBuild.duration} \
-                --commit=\$(git rev-parse HEAD)
-            """
+            script {
+                // node {} Ensures we have a workspace to run shell scripts
+                node {
+                    echo 'Recording build metadata to Database...'
+                    withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'URL')]) {
+                        sh """
+                            cd packages/ion-db
+                            DATABASE_URL=${URL} bun run db:record-build \
+                            --status=${currentBuild.result ?: 'SUCCESS'} \
+                            --duration=${currentBuild.duration} \
+                            --commit=\$(git rev-parse HEAD)
+                        """
+                    }
+                }
+            }
         }
     }
 }
