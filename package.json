@@ -1,5 +1,7 @@
 {
+  "name": "ion-monorepo",
   "private": true,
+  "packageManager": "bun@1.2.22",
   "prisma": {
     "schema": "packages/database/prisma/schema.prisma",
     "seed": "tsx packages/database/src/seed.ts"
@@ -24,13 +26,11 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "with-prisma",
   "dependencies": {
     "@prisma/adapter-pg": "7.5.0",
     "@prisma/client": "7.5.0",
     "@prisma/client-runtime-utils": "7.5.0"
   },
-  "packageManager": "bun@1.2.22",
   "overrides": {
     "@prisma/client-runtime-utils": "7.5.0"
   },
