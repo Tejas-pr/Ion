@@ -21,11 +21,11 @@ pipeline {
 
         stage('Dockerize') {
             parallel {
-                stage('Ion') { steps { sh 'docker build -t ion-app ./apps/ion' } }
-                stage('Repo') { steps { sh 'docker build -t ion-repo-service ./apps/ion-repo-service' } }
-                stage('Deployment') { steps { sh 'docker build -t ion-deployment-service ./apps/ion-deployment-service' } }
-                stage('Request') { steps { sh 'docker build -t ion-request-service ./apps/ion-request-service' } }
-                stage('Websocket') { steps { sh 'docker build -t ion-websocket ./apps/ion-websocket' } }
+                stage('Ion') { steps { sh 'docker build -t ion-app -f apps/ion/Dockerfile .' } }
+                stage('Repo') { steps { sh 'docker build -t ion-repo-service -f apps/ion-repo-service/Dockerfile .' } }
+                stage('Deployment') { steps { sh 'docker build -t ion-deployment-service -f apps/ion-deployment-service/Dockerfile .' } }
+                stage('Request') { steps { sh 'docker build -t ion-request-service -f apps/ion-request-service/Dockerfile .' } }
+                stage('Websocket') { steps { sh 'docker build -t ion-websocket -f apps/ion-websocket/Dockerfile .' } }
             }
         }
 
