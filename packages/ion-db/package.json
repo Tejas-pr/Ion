@@ -16,7 +16,7 @@
     "lint": "eslint . --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
-    "db:record-build": "tsx src/record-build.ts",
+    "db:record-build": "bun src/record-build.ts",
     "studio": "prisma studio"
   },
   "dependencies": {
