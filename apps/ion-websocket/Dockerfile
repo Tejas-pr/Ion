@@ -4,6 +4,7 @@ WORKDIR /app
 FROM base AS pruner
 RUN bun add -g turbo@2.8.9
 COPY . .
+RUN cat package.json
 RUN turbo prune ion-websocket --docker
 
 FROM base AS installer
