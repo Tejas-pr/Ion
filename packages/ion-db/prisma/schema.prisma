@@ -86,6 +86,8 @@ model Project {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  builds Build[]
+
   @@index([userId])
 }
 
@@ -101,8 +103,14 @@ enum ProjectStatus {
 model Build {
   id         String   @id @default(cuid())
   status     String // e.g., "SUCCESS", "FAILURE"
-  duration   Int // in milliseconds
+  duration   Int? // in milliseconds
   commitHash String
   logs       String?
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
 }

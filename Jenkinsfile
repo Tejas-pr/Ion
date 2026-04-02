@@ -5,10 +5,11 @@ pipeline {
         stage('Setup') {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
-                // We name the variable DATABASE_URL so Turbo picks it up automatically!
+                // Ensure we use the exact version of Prisma everywhere
                 withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
-                    sh 'bun install --allow-scripts'
-                    sh 'bun run generate'
+                    sh 'bun install'
+                    sh 'bun x prisma -v'
+                    sh 'bun x prisma generate --force'
                 }
             }
         }
@@ -28,20 +29,29 @@ pipeline {
                 stage('Websocket') { steps { sh 'docker build -t ion-websocket -f apps/ion-websocket/Dockerfile .' } }
             }
         }
+    }
 
-        stage('Update Database Metadata') {
-            steps {
-                script {
-                    echo 'Recording build details to Postgres...'
+    post {
+        always {
+            script {
+                echo 'Recording build details to Postgres...'
+                try {
                     withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
+                        def commit = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                        def durationMillis = currentBuild.duration.toString()
+                        def status = currentBuild.result ?: (currentBuild.currentResult ?: 'FAILURE')
+
                         sh """
                             cd packages/ion-db
                             bun run db:record-build \
-                            --status=${currentBuild.result ?: 'SUCCESS'} \
-                            --duration=${currentBuild.duration} \
-                            --commit=\$(git rev-parse HEAD)
+                            --status=${status} \
+                            --duration=${durationMillis} \
+                            --commit=${commit} \
+                            --project=ion
                         """
                     }
+                } catch (err) {
+                    echo "Warning: Failed to record build metadata: ${err.message}"
                 }
             }
         }
