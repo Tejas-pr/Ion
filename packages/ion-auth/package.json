@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "better-auth": "^1.4.18",
-    "axios": "^1.13.6"
+    "axios": "^1.13.6",
+    "@ion/database": "*"
   },
   "exports": {
     "./client": "./src/client.ts",
