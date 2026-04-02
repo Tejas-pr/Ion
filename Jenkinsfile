@@ -5,11 +5,10 @@ pipeline {
         stage('Setup') {
             steps {
                 echo 'Installing Dependencies & Generating Prisma Client...'
-                // Ensure we use the exact version of Prisma everywhere
                 withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
                     sh 'bun install'
+                    sh 'bun run generate' // Using turbo generate to reach all packages
                     sh 'bun x prisma -v'
-                    sh 'bun x prisma generate --force'
                 }
             }
         }
@@ -51,7 +50,7 @@ pipeline {
                         """
                     }
                 } catch (err) {
-                    echo "Warning: Failed to record build metadata: ${err.message}"
+                    echo "Warning: Failed to record build metadata: ${err}"
                 }
             }
         }
