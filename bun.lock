@@ -23,6 +23,7 @@
       "dependencies": {
         "@ion/auth": "*",
         "@ion/database": "*",
+        "@repo/typescript-config": "*",
         "axios": "^1.13.6",
         "better-auth": "^1.4.18",
         "class-variance-authority": "^0.7.1",
@@ -36,6 +37,7 @@
         "tailwind-merge": "^3.4.1",
       },
       "devDependencies": {
+        "@repo/typescript-config": "*",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
         "@types/react": "^19",
@@ -125,6 +127,7 @@
     "packages/ion-auth": {
       "name": "@ion/auth",
       "dependencies": {
+        "@ion/database": "*",
         "axios": "^1.13.6",
         "better-auth": "^1.4.18",
       },

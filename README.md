@@ -176,28 +176,23 @@ The services will start on the following ports:
 
 ## 🔮 Future Improvements – TODO
 
-- [ ] Support for private Git repositories via SSH keys/Deploy keys.
-- [ ] Incremental builds and build caching.
-- [ ] Custom domain support (CNAME mapping).
-- [ ] Environment variable management per-project from the UI.
-- [ ] Deployment rollbacks and version history.
 - [ ] Directly connect to the gihub to fetch all the repos from the github users.
 
 ## ✅ CI/CD Integration (Jenkins)
 
-- [ ] Set up Jenkins using Docker for local development
-- [ ] Create Jenkinsfile with pipeline stages (install, test, build, dockerize, deploy)
-- [ ] Configure GitHub webhook to trigger builds automatically
-- [ ] Store build metadata (status, duration, logs) in database
+- [✅] Set up Jenkins using Docker for local development
+- [✅] Create Jenkinsfile with pipeline stages (install, test, build, dockerize, deploy)
+- [✅] Configure GitHub webhook to trigger builds automatically
+- [✅] Store build metadata (status, duration, logs) in database
 
 ---
 
 ## 🐳 Dockerization
 
-- [ ] Write Dockerfile for backend service
-- [ ] Write Dockerfile for frontend service
-- [ ] Create docker-compose.yml for all services (app, Jenkins, Prometheus, Grafana)
-- [ ] Use multi-stage builds to optimize image size
+- [✅] Write Dockerfile for backend service
+- [✅] Write Dockerfile for frontend service
+- [✅] Create docker-compose.yml for all services (app, Jenkins, Prometheus, Grafana)
+- [✅] Use multi-stage builds to optimize image size
 
 ---
 
