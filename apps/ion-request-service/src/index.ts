@@ -39,7 +39,6 @@ app.use(express.json());
 
 app.get('/workspace', async (req, res) => {
     const userId = (await getUserSession(req, res))?.user?.id;
-    console.log("userIduserId", userId);
 
     const projects = await prisma.project.findMany({
         where: {

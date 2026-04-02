@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation'
 
 interface HeaderProps {
   mobileMenuOpen: boolean;
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 export default function Header({ mobileMenuOpen, setMobileMenuOpen }: HeaderProps) {
   const [themeLogo, setThemeLogo] = useState<'light' | 'dark'>('dark');
+  const navigate = useRouter();
 
   const navItems = [
     { label: 'Products', href: '#' },
@@ -54,7 +56,7 @@ export default function Header({ mobileMenuOpen, setMobileMenuOpen }: HeaderProp
 
         {/* CTA and Mobile Menu */}
         <div className="flex items-center gap-4">
-          <button className="hidden md:inline px-6 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-colors text-sm">
+          <button onClick={() => navigate.push('/signup')} className="hidden md:inline px-6 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-colors text-sm">
             Get Started
           </button>
 
