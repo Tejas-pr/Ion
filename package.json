@@ -20,7 +20,7 @@
   "devDependencies": {
     "@prisma/config": "^7.6.0",
     "prettier": "^3.2.5",
-    "prisma": "latest",
+    "prisma": "^7.6.0",
     "tsx": "4.21.0",
     "turbo": "^2.8.9"
   },
@@ -28,12 +28,12 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.5.0",
-    "@prisma/client": "7.5.0",
-    "@prisma/client-runtime-utils": "7.5.0"
+    "@prisma/adapter-pg": "7.6.0",
+    "@prisma/client": "7.6.0",
+    "@prisma/client-runtime-utils": "7.6.0"
   },
   "overrides": {
-    "@prisma/client-runtime-utils": "7.5.0"
+    "@prisma/client-runtime-utils": "7.6.0"
   },
   "workspaces": [
     "apps/*",
