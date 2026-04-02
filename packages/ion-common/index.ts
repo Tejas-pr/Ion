@@ -1,6 +1,9 @@
 import { createClient } from 'redis';
 
-const client = createClient();
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const client = createClient({
+    url: redisUrl
+});
 await client.connect();
 
 export const REDIS_QUEUE_NAME = process.env.REIDS_QUEUE_NAME || "ion-build-queue";

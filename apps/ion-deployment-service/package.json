@@ -8,18 +8,19 @@
     "dev": "bun run src/index.ts",
     "start": "node dist/index.js"
   },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "ion-aws": "*",
+    "ion-common": "*",
+    "@ion/database": "*",
+    "ion-websocket": "*",
+    "@ion/monitoring": "*"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@repo/typescript-config": "*"
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "dotenv": "^17.3.1",
-    "ion-aws": "*",
-    "ion-common": "*",
-    "@ion/database": "*",
-    "ion-websocket": "*"
   }
 }

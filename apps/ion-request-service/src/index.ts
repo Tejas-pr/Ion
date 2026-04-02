@@ -14,9 +14,11 @@ import { prisma } from "@ion/database";
 import { renderNotFound } from "./template";
 import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import { allowedOrigins } from "ion-common/redis";
+import { metricsHandler, metricsMiddleware } from "@ion/monitoring/monitoring";
 const { auth } = await import("@ion/auth/auth");
 
 const app = express();
+app.use(metricsMiddleware);
 
 app.all(/\/api\/auth\/.*/, toNodeHandler(auth));
 
@@ -27,6 +29,8 @@ app.use(
         credentials: true,
     })
 );
+
+app.get("/metrics", metricsHandler);
 
 app.get("/api/me", async (req, res) => {
     const session = await auth.api.getSession({

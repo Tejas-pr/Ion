@@ -21,7 +21,8 @@
     "ion-common": "*",
     "redis": "^5.11.0",
     "simple-git": "^3.33.0",
-    "@ion/auth": "*"
+    "@ion/auth": "*",
+    "@ion/monitoring": "*"
   },
   "devDependencies": {
     "@types/bun": "latest"

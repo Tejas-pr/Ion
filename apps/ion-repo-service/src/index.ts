@@ -18,10 +18,12 @@ import { LPUSH, REDIS_QUEUE_NAME } from "ion-common/redis";
 import { uploadDirectory } from "ion-aws/general-functions";
 import { prisma } from "@ion/database";
 import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
+import { metricsHandler, metricsMiddleware } from "@ion/monitoring/monitoring";
 
 const { auth } = await import("@ion/auth/auth");
 
 const app = express();
+app.use(metricsMiddleware);
 
 app.all(/\/api\/auth\/.*/, toNodeHandler(auth));
 
@@ -30,6 +32,8 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+
+app.get("/metrics", metricsHandler);
 
 app.post("/deploy", async (req, res) => {
     const session = await auth.api.getSession({
