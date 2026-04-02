@@ -4,8 +4,9 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                echo 'Installing Dependencies & Generating Prisma Client...'
+                echo 'Cleaning and Installing Dependencies...'
                 withCredentials([string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL')]) {
+                    sh 'rm -rf node_modules packages/*/node_modules apps/*/node_modules bun.lock'
                     sh 'bun install'
                     sh 'bun run generate' // Using turbo generate to reach all packages
                     sh 'bun x prisma -v'
