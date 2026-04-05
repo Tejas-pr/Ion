@@ -1,7 +1,13 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { SUBSCRIBE } from "ion-common/redis";
+import express from "express";
+import { metricsHandler } from "@ion/monitoring/monitoring";
 
 const clients = new Map<string, WebSocket>();
+
+const metricsApp = express();
+metricsApp.get("/metrics", metricsHandler);
+metricsApp.listen(8082, () => console.log("WebSocket metrics on port 8082"));
 
 export const broadcast = (projectId: string, message: string) => {
     const ws = clients.get(projectId);

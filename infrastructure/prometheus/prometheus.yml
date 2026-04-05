@@ -2,10 +2,29 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: "ion-services"
+  # --- LOCAL DEV: services run on host via `bun dev` ---
+  # host.docker.internal resolves to the host on Windows/Mac
+  # On Linux, replace with your LAN IP (e.g. 192.168.1.x)
+  - job_name: "ion-request-service"
     static_configs:
-      - targets:
-          - ion-request-service:3003
-          - ion-repo-service:3002
-          - ion-deployment-service:3005
-          - ion-websocket:8081
+      - targets: ["host.docker.internal:3003"]
+        labels:
+          service: "ion-request-service"
+
+  - job_name: "ion-repo-service"
+    static_configs:
+      - targets: ["host.docker.internal:3002"]
+        labels:
+          service: "ion-repo-service"
+
+  - job_name: "ion-deployment-service"
+    static_configs:
+      - targets: ["host.docker.internal:3005"]
+        labels:
+          service: "ion-deployment-service"
+
+  - job_name: "ion-websocket"
+    static_configs:
+      - targets: ["host.docker.internal:8082"]
+        labels:
+          service: "ion-websocket"

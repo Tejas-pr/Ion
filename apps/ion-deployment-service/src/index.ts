@@ -15,6 +15,12 @@ import { buildProject } from "./builder";
 import { getFileFromS3, uploadDirectory } from "ion-aws/general-functions";
 import { safeCleanup, scheduleCleanup, startCleanupJanitor } from "./cleaner";
 import { prisma } from "@ion/database";
+import express from "express";
+import { metricsHandler } from "@ion/monitoring/monitoring";
+
+const metricsApp = express();
+metricsApp.get("/metrics", metricsHandler);
+metricsApp.listen(3005, () => console.log("Metrics server on port 3005"));
 
 const main = async () => {
     const outputBaseDir = path.join(__dirname, "output");
