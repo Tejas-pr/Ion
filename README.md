@@ -62,6 +62,8 @@ Ion is built as a monorepo utilizing **Turborepo** and **Bun**, orchestrating se
 - **Isolated Build Engine**: Uses Docker to ensure clean and consistent builds every time.
 - **Real-time Logs**: Stream build/deploy logs directly to your browser using WebSockets.
 - **Full-Stack Observability**: Integrated Prometheus and Grafana for real-time monitoring of service health, resource usage, and performance.
+- **CI/CD Pipeline**: Automated Jenkins integration with multi-stage build pipelines and Dockerized deployment.
+- **Fully Microservices-based**: Every service is containerized using optimized Docker multi-stage builds for light-weight and portable deployments.
 - **Wildcard Subdomains**: Every project gets its own unique, accessible URL immediately.
 - **Async Pipeline**: Non-blocking architecture ensures the UI remains snappy while heavy lifting happens in the background.
 - **Interactive Dashboard**: Premium dark-mode UI for managing projects and monitoring health.
@@ -209,23 +211,8 @@ The services will start on the following ports:
 
 - [ ] Directly connect to the gihub to fetch all the repos from the github users.
 
-## ✅ CI/CD Integration (Jenkins)
-
-- [✅] Set up Jenkins using Docker for local development
-- [✅] Create Jenkinsfile with pipeline stages (install, test, build, dockerize, deploy)
-- [✅] Configure GitHub webhook to trigger builds automatically
-- [✅] Store build metadata (status, duration, logs) in database
-
 ---
 
-## 🐳 Dockerization
-
-- [✅] Write Dockerfile for backend service
-- [✅] Write Dockerfile for frontend service
-- [✅] Create docker-compose.yml for all services (app, Jenkins, Prometheus, Grafana)
-- [✅] Use multi-stage builds to optimize image size
-
----
 
 ## 🤖 AI Failure Analysis (LLM)
 
