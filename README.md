@@ -6,6 +6,9 @@ Ion is a high-performance, self-hosted deployment platform designed for modern w
 
 https://github.com/user-attachments/assets/11751ab2-3c4f-41f4-bf56-e0374eb6a1b6
 
+# Grafana dashboard
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/3e351630-4d10-4894-9fdb-fa8dc5c1f5c3" />
+
 ## 🏗️ Architecture Overview
 
 Ion is built as a monorepo utilizing **Turborepo** and **Bun**, orchestrating several specialized services that communicate through **Redis** and shared storage (**Cloudflare R2/S3**).
