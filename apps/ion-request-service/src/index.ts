@@ -14,6 +14,7 @@ import { prisma } from "@ion/database";
 import { renderNotFound } from "./template";
 import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import { allowedOrigins } from "ion-common/redis";
+import { authMiddleware } from "ion-common/middleware-service";
 import { metricsHandler, metricsMiddleware } from "@ion/monitoring/monitoring";
 const { auth } = await import("@ion/auth/auth");
 
@@ -41,9 +42,9 @@ app.get("/api/me", async (req, res) => {
 
 app.use(express.json());
 
-app.get('/workspace', async (req, res) => {
-    const userId = (await getUserSession(req, res))?.user?.id;
-
+app.get('/workspace', authMiddleware(auth), async (req, res) => {
+    // @ts-ignore
+    const userId = req.user.id;
     const projects = await prisma.project.findMany({
         where: {
             userId,
@@ -56,9 +57,11 @@ app.get('/workspace', async (req, res) => {
     });
 });
 
-app.get('/project/:id', async (req, res) => {
+app.get('/project/:id', authMiddleware(auth), async (req, res) => {
     const id = req.params.id;
-    const userId = (await getUserSession(req, res))?.user?.id;
+    // @ts-ignore
+    const userId = req.user.id;
+
 
     if (!id) {
         return res.status(400).json({
@@ -122,9 +125,4 @@ app.listen(process.env.REQUEST_BACKEND_PORT || 3003, () => {
     console.log("Request service is running on port", process.env.REQUEST_BACKEND_PORT || 3003);
 });
 
-const getUserSession = async (req: any, res: any) => {
-    const session = await auth.api.getSession({
-        headers: fromNodeHeaders(req.headers),
-    });
-    return session;
-}
+

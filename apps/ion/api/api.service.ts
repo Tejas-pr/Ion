@@ -29,3 +29,14 @@ export const getProjectDetails = async (id: string) => {
     });
     return response.data;
 };
+
+export const getGithubRepos = async (page: number = 1, perPage: number = 5) => {
+    const response = await axios.get(`${REPO_BACKEND_URL}/github/repos`, {
+        params: {
+            page,
+            perPage,
+        },
+        withCredentials: true,
+    });
+    return response.data;
+}
