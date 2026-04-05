@@ -206,114 +206,13 @@ The services will start on the following ports:
 5.  **Listen**: Hear the retro "Achievement Unlock" sound when the build finishes.
 6.  **Visit**: Click "View Deployed" to see your app live on its own unique subdomain.
 
-## 🔮 Future Improvements – TODO
+## 🔮 Roadmap & Future Enhancements
 
-- [ ] Directly connect to the gihub to fetch all the repos from the github users.
+The full roadmap, including our **AI Agent Integration** and **Kubernetes Plans**, has been moved to a dedicated document:
 
----
-
-
-## 🤖 AI Failure Analysis (LLM)
-
-- [ ] Send logs to LLM API for analysis
-- [ ] Generate failure summary, root cause, and suggested fixes
-- [ ] Store AI insights in database
-- [ ] Display AI insights in dashboard
-
----
-
-## 🗄️ Backend Enhancements
-
-- [ ] Design database schema (builds, deployments, logs, metrics)
-- [ ] Implement APIs to fetch pipeline data and logs
-- [ ] Implement APIs to fetch metrics and AI insights
-
----
-
-## 🖥️ Frontend Dashboard
-
-- [ ] Display pipeline runs and build statuses
-- [ ] Show logs with filtering/search
-- [ ] Add charts for:
-  - [ ] Success/failure trends
-  - [ ] Build duration
-- [ ] Show AI-generated summaries for failures
-
----
-
-## 🔔 Alerts & Notifications
-
-- [ ] Trigger alerts on build failures
-- [ ] Trigger alerts on high error rates
-- [ ] Integrate Slack or Email notifications
-
----
-
-## 🌐 Deployment & Infrastructure
-
-- [ ] Deploy services using Docker (EC2 or VPS)
-- [ ] Set up NGINX as reverse proxy
-- [ ] Configure environment variables and secrets
-- [ ] Secure services and endpoints
-
----
-
-## 🧪 Bonus Features (Optional)
-
-- [ ] Auto-retry failed builds
-- [ ] Canary deployments
-- [ ] Role-based access control (RBAC)
-- [ ] Multi-project support
-- [ ] Uptime monitoring
-
----
-
-# NEXT IN FUTURE.
-
-## 🔄 GitOps (Modern Deployment Strategy)
-
-- [ ] Set up GitOps workflow for deployments (separate infra repo)
-- [ ] Store Kubernetes manifests (YAML) in Git
-- [ ] Auto-sync deployments on Git changes
-- [ ] Implement environment-based configs (dev/staging/prod)
-- [ ] Maintain version-controlled infrastructure
-
----
-
-## ☸️ Kubernetes (Container Orchestration)
-
-- [ ] Set up local Kubernetes cluster (Minikube / k3s)
-- [ ] Write Kubernetes manifests:
-  - [ ] Deployment (app pods)
-  - [ ] Service (expose app)
-  - [ ] Ingress (routing)
-- [ ] Deploy application to Kubernetes cluster
-- [ ] Configure auto-scaling (Horizontal Pod Autoscaler)
-- [ ] Manage configs using ConfigMaps and Secrets
-- [ ] Compare Docker vs Kubernetes deployment in docs
-
----
-
-## 🚀 Argo CD (GitOps Deployment Tool)
-
-- [ ] Install Argo CD in Kubernetes cluster
-- [ ] Connect Argo CD to Git repository
-- [ ] Enable automatic sync of manifests to cluster
-- [ ] Visualize application state via Argo CD dashboard
-- [ ] Implement rollback using Git history
-- [ ] Manage multiple environments (dev/staging/prod)
-- [ ] Secure Argo CD access (authentication)
-
----
-
-## 🔐 Kubernetes Security & Best Practices
-
-- [ ] Use Secrets for sensitive data (avoid hardcoding)
-- [ ] Implement RBAC for cluster access control
-- [ ] Set resource limits (CPU/memory) for pods
-- [ ] Enable liveness and readiness probes
-- [ ] Restrict container privileges (securityContext)
+👉 [**View Ion Roadmap & TODOs (AI Agent, GitOps, Kubernetes)**](./README-TODO.md)
 
 ---
 
 Built with ⚡ by Tejas P R
+
