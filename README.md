@@ -61,10 +61,38 @@ Ion is built as a monorepo utilizing **Turborepo** and **Bun**, orchestrating se
 - **Instant Deployments**: Clone and deploy any Vite/React project via Git URL.
 - **Isolated Build Engine**: Uses Docker to ensure clean and consistent builds every time.
 - **Real-time Logs**: Stream build/deploy logs directly to your browser using WebSockets.
+- **Full-Stack Observability**: Integrated Prometheus and Grafana for real-time monitoring of service health, resource usage, and performance.
 - **Wildcard Subdomains**: Every project gets its own unique, accessible URL immediately.
 - **Async Pipeline**: Non-blocking architecture ensures the UI remains snappy while heavy lifting happens in the background.
 - **Interactive Dashboard**: Premium dark-mode UI for managing projects and monitoring health.
 - **Retro Sound Effects**: Audible 8-bit notifications for successful build completions.
+
+## 📊 Observability & Monitoring
+
+Ion includes a robust monitoring stack to ensure high availability and performance.
+
+### Prometheus Configuration
+Each microservice exposes a `/metrics` endpoint populated by the `@ion/monitoring` package. Prometheus is configured to scrape these targets every 5 seconds.
+
+- **Request Service**: `http://localhost:3003/metrics`
+- **Repo Service**: `http://localhost:3002/metrics`
+- **Deployment Service**: `http://localhost:3005/metrics`
+- **WebSocket Service**: `http://localhost:8082/metrics`
+
+### Metrics Tracked
+- **HTTP Latency**: P50/P95 histograms for all API routes via `http_request_duration_seconds`.
+- **System Health**: Memory usage (RSS), CPU utilization, and process uptime.
+- **Node.js Internals**: Event loop lag, active handles, and garbage collection statistics.
+- **Service Availability**: Real-time "Up/Down" status for all distributed components.
+
+### Grafana Dashboard
+A pre-provisioned "Ion Services Overview" dashboard provides a single pane of glass for:
+- Real-time success/failure rates.
+- Resource consumption trends.
+- Bottleneck identification via latency heatmaps.
+
+---
+
 
 ## 📂 Services Breakdown
 
@@ -199,31 +227,8 @@ The services will start on the following ports:
 
 ---
 
-## 📊 Metrics Collection (Prometheus)
-
-- [ ] Set up Prometheus for metrics scraping
-- [ ] Add /metrics endpoint in backend (Express/Node)
-- [ ] Track API latency, request count, error rate
-- [ ] Monitor system metrics (CPU, memory)
-- [ ] Configure Prometheus scrape targets
-
----
-
-## 📈 Visualization (Grafana)
-
-- [ ] Set up Grafana and connect Prometheus as data source
-- [ ] Create dashboards for:
-  - [ ] CI/CD pipeline status
-  - [ ] Build success vs failure trends
-  - [ ] Deployment frequency
-  - [ ] System performance metrics
-- [ ] Configure alerts (Slack or Email)
-
----
-
 ## 🤖 AI Failure Analysis (LLM)
 
-- [ ] Capture Jenkins logs for failed builds
 - [ ] Send logs to LLM API for analysis
 - [ ] Generate failure summary, root cause, and suggested fixes
 - [ ] Store AI insights in database
