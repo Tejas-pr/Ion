@@ -1,9 +1,19 @@
+'use client';
+
 import React from "react";
-import { Boxes } from "lucide-react";
+import { Boxes, Github } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 
 export function Sidebar() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleTabChange = (tab: string) => {
+    router.push(tab);
+  };
+
   return (
-    <aside className="w-48 border-r border-border bg-card text-card-foreground overflow-y-auto flex flex-col">
+    <aside className="border-r border-border bg-card text-card-foreground overflow-y-auto flex flex-col w-64">
       {/* Header */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center gap-3">
@@ -19,9 +29,28 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-primary/10 dark:bg-primary/20 text-primary">
+        <button
+          onClick={() => handleTabChange("/workspace")}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+            pathname === "/workspace"
+              ? "bg-primary/10 dark:bg-primary/20 text-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/30 dark:hover:bg-accent/20"
+          }`}
+        >
           <Boxes className="w-5 h-5 flex-shrink-0" />
           <span className="text-left">My Projects</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange("/github")}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+            pathname === "/github"
+              ? "bg-primary/10 dark:bg-primary/20 text-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/30 dark:hover:bg-accent/20"
+          }`}
+        >
+          <Github className="w-5 h-5 flex-shrink-0" />
+          <span className="text-left">From GitHub</span>
         </button>
       </nav>
 
