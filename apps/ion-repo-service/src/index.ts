@@ -29,8 +29,8 @@ app.use(metricsMiddleware);
 app.all(/\/api\/auth\/.*/, toNodeHandler(auth));
 
 app.use(cors({
-    origin: true,
-    credentials: true,
+  origin: true,
+  credentials: true,
 }));
 app.use(express.json());
 
@@ -54,7 +54,8 @@ app.get("/github/repos", authMiddleware(auth), async (req, res) => {
       return res.status(401).json({ error: "No GitHub token found" });
     }
 
-    const url = `https://api.github.com/user/repos?type=all&sort=pushed&direction=desc&page=${page}&per_page=${perPage}`;
+    // const url = `https://api.github.com/user/repos?type=all&sort=pushed&direction=desc&page=${page}&per_page=${perPage}`;
+    const url = `https://api.github.com/repos/`;
 
     const response = await fetch(url, {
       headers: {
@@ -104,81 +105,81 @@ app.get("/github/repos", authMiddleware(auth), async (req, res) => {
 });
 
 app.post("/deploy", authMiddleware(auth), async (req, res) => {
-    // @ts-ignore
-    const userId = req.user.id;
+  // @ts-ignore
+  const userId = req.user.id;
 
-    const name = req.body.name;
-    const repoUrl = req.body.url;
+  const name = req.body.name;
+  const repoUrl = req.body.url;
 
-    const existingUser = await prisma.user.findUnique({
-        where: { id: userId }
+  const existingUser = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+
+  if (!existingUser) {
+    return res.status(400).json({
+      success: false,
+      message: "User not found in database",
     });
+  }
 
-    if (!existingUser) {
-        return res.status(400).json({
-            success: false,
-            message: "User not found in database",
-        });
-    }
-
-    if (!repoUrl || !name || !userId) {
-        res.status(400).json({
-            success: false,
-            message: "Please provide url, project name and user id!",
-        });
-    }
-    const id = generateRandomString();
-    if (!id) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to generate random string!",
-        });
-    }
-
-    const project = await prisma.project.create({
-        data: {
-            projectId: id,
-            name: name,
-            repoUrl,
-            userId,
-            status: "CLONING",
-        }
+  if (!repoUrl || !name || !userId) {
+    res.status(400).json({
+      success: false,
+      message: "Please provide url, project name and user id!",
     });
-
-    // Return immediately to the frontend
-    res.json({
-        success: true,
-        id,
-        project,
+  }
+  const id = generateRandomString();
+  if (!id) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate random string!",
     });
+  }
 
-    // Handle cloning/uploading in the background
-    (async () => {
-        try {
-            const outputPath = path.join(__dirname, `output/${id}`);
-            await simpleGit().clone(repoUrl, outputPath);
+  const project = await prisma.project.create({
+    data: {
+      projectId: id,
+      name: name,
+      repoUrl,
+      userId,
+      status: "CLONING",
+    }
+  });
 
-            await uploadDirectory(outputPath, `clones/${id}`);
+  // Return immediately to the frontend
+  res.json({
+    success: true,
+    id,
+    project,
+  });
 
-            await fs.promises.rm(outputPath, { recursive: true, force: true });
+  // Handle cloning/uploading in the background
+  (async () => {
+    try {
+      const outputPath = path.join(__dirname, `output/${id}`);
+      await simpleGit().clone(repoUrl, outputPath);
 
-            // update status to IN_QUEUE before pushing to redis
-            await prisma.project.update({
-                where: { id: project.id },
-                data: { status: "IN_QUEUE" }
-            });
+      await uploadDirectory(outputPath, `clones/${id}`);
 
-            LPUSH(REDIS_QUEUE_NAME, id);
-        } catch (error) {
-            console.error("Cloning or uploading failed for project:", id, error);
-            await prisma.project.update({
-                where: { id: project.id },
-                data: { status: "FAILED" }
-            });
-        }
-    })();
+      await fs.promises.rm(outputPath, { recursive: true, force: true });
+
+      // update status to IN_QUEUE before pushing to redis
+      await prisma.project.update({
+        where: { id: project.id },
+        data: { status: "IN_QUEUE" }
+      });
+
+      LPUSH(REDIS_QUEUE_NAME, id);
+    } catch (error) {
+      console.error("Cloning or uploading failed for project:", id, error);
+      await prisma.project.update({
+        where: { id: project.id },
+        data: { status: "FAILED" }
+      });
+    }
+  })();
 });
 
 app.listen(process.env.REPO_BACKEND_PORT || 3002, () => {
-    console.log("Repo service is running on port", process.env.REPO_BACKEND_PORT || 3002);
+  console.log("Repo service is running on port", process.env.REPO_BACKEND_PORT || 3002);
 });
