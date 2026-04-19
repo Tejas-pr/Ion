@@ -72,7 +72,7 @@ A conversational interface that manages deployments.
 ---
 
 ## 🎙️ Phase 3: Voice Commands & Natural Language
-*Status: Planned ⚪*
+*Status: In Progress 🟡*
 
 ### 3.1 Speech-to-Text (STT)
 - **Goal**: Convert user voice to text prompts.

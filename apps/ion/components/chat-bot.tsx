@@ -5,17 +5,57 @@ import { useChat } from 'ai/react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
-import { Bot, User, Send, X, Terminal, Loader2, Rocket, History, Github } from 'lucide-react';
+import { Bot, User, Send, X, Terminal, Loader2, Rocket, History, Github, Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 
 export function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, reload } = useChat({
     api: '/api/chat',
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        handleInputChange({ target: { value: transcript } } as any);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, [handleInputChange]);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+        alert("Speech Recognition not supported in this browser.");
+        return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -25,7 +65,6 @@ export function ChatBot() {
 
   return (
     <>
-      {/* Floating Toggle Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 rounded-full w-14 h-14 shadow-2xl z-50 bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-110"
@@ -33,10 +72,8 @@ export function ChatBot() {
         {isOpen ? <X className="w-6 h-6" /> : <Bot className="w-8 h-8" />}
       </Button>
 
-      {/* Chat Window */}
       {isOpen && (
         <Card className="fixed bottom-24 right-6 w-[400px] h-[600px] flex flex-col shadow-2xl z-50 border-primary/20 bg-background/95 backdrop-blur-md overflow-hidden animate-in slide-in-from-bottom-5">
-          {/* Header */}
           <div className="p-4 border-b bg-primary/5 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="bg-primary/10 p-2 rounded-lg">
@@ -52,7 +89,6 @@ export function ChatBot() {
             </div>
           </div>
 
-          {/* Messages Area */}
           <div 
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
@@ -100,7 +136,6 @@ export function ChatBot() {
                 )}>
                   {m.content}
                   
-                  {/* Tool rendering if we had specific components for them */}
                   {m.toolInvocations?.map((toolInvocation) => {
                     const { toolName, toolCallId, state } = toolInvocation;
 
@@ -164,19 +199,36 @@ export function ChatBot() {
             )}
           </div>
 
-          {/* Input Area */}
           <form 
             onSubmit={handleSubmit}
             className="p-4 border-t bg-primary/5 flex items-center gap-2"
           >
-            <Input
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Ask Ion Bot..."
-              className="bg-background border-primary/10 focus-visible:ring-primary/20"
-              disabled={isLoading}
-            />
-            <Button type="submit" size="icon" disabled={isLoading || !input} className="shrink-0 transition-transform active:scale-95">
+            <div className="relative flex-1">
+              <Input
+                value={input}
+                onChange={handleInputChange}
+                placeholder={isListening ? "Listening..." : "Ask Ion Bot..."}
+                className={cn(
+                  "bg-background border-primary/10 focus-visible:ring-primary/20 pr-10",
+                  isListening && "ring-2 ring-primary animate-pulse"
+                )}
+                disabled={isLoading}
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className={cn(
+                  "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full transition-all",
+                  isListening ? "text-primary border border-primary animate-pulse bg-primary/10" : "text-muted-foreground hover:text-primary"
+                )}
+                onClick={toggleListening}
+                disabled={isLoading}
+              >
+                {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+              </Button>
+            </div>
+            <Button type="submit" size="icon" disabled={isLoading || (!input && !isListening)} className="shrink-0 transition-transform active:scale-95 shadow-lg">
               <Send className="w-4 h-4" />
             </Button>
           </form>

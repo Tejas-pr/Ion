@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   console.log("ChatBot: Messages received:", JSON.stringify(messages, null, 2));
 
   try {
-    const model = google('gemini-2.0-flash');
+    const model = google('gemini-2.0-flash-001');
     console.log("ChatBot: Model initialized");
 
     const result = streamText({
@@ -50,8 +50,9 @@ STRICT RULES:
 - When user asks about repositories → ALWAYS call "list_repos"
 - When user asks about deployments/status → ALWAYS call "get_deployment_status"
 - When user wants to deploy → ALWAYS call "start_deployment"
-- NEVER guess data when tools exist
-- Keep responses concise and professional
+- Map user nicknames (e.g., "my main app") to real repo names from the "list_repos" results.
+- NEVER guess data when tools exist.
+- Keep responses concise and professional.
 `,
       tools: {
         list_repos: tool({
