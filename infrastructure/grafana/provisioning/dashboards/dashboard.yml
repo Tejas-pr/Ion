@@ -3,5 +3,7 @@ providers:
   - name: Ion
     folder: Ion
     type: file
+    update: true
     options:
       path: /etc/grafana/provisioning/dashboards
+      foldersFromFiles: true

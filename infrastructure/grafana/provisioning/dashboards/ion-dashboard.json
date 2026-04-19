@@ -1,0 +1,173 @@
+{
+  "title": "🚀 ION COMMAND CENTER",
+  "uid": "ion-command-center",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "System Health Overview",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 6 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "textMode": "value_and_name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "text": { "valueSize": 45, "titleSize": 20 }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "🔴 OFFLINE", "color": "red" }, "1": { "text": "🟢 ONLINE", "color": "green" } } }
+          ],
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "red" },
+              { "value": 1, "color": "green" }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "up",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 2,
+      "title": "🔥 CPU Load",
+      "type": "gauge",
+      "gridPos": { "x": 0, "y": 6, "w": 8, "h": 9 },
+      "options": {
+        "reduceOptions": { "calcs": ["mean"] },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": { "valueSize": 50 }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "rgba(50, 172, 45, 0.97)" },
+              { "value": 70, "color": "rgba(237, 129, 40, 0.89)" },
+              { "value": 90, "color": "rgba(245, 54, 54, 0.9)" }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total[1m]) * 100",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 3,
+      "title": "💾 Memory Consumption",
+      "type": "gauge",
+      "gridPos": { "x": 8, "y": 6, "w": 8, "h": 9 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": { "valueSize": 50 }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "min": 0,
+          "max": 1024,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "lightblue" },
+              { "value": 600, "color": "orange" },
+              { "value": 850, "color": "red" }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 4,
+      "title": "⚡ Live Throughput",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 6, "w": 8, "h": 9 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "text": { "valueSize": 50, "titleSize": 20 },
+        "colorMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(http_request_duration_seconds_count[1m])) by (service)",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 5,
+      "title": "📈 Traffic History (req/min)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 9 },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineWidth": 3,
+            "fillOpacity": 30,
+            "spanNulls": true,
+            "showPoints": "always",
+            "pointSize": 5
+          },
+          "unit": "short",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(http_request_duration_seconds_count[2m])) by (service) * 60",
+          "legendFormat": "{{ service }}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    }
+  ]
+}
