@@ -54,8 +54,7 @@ app.get("/github/repos", authMiddleware(auth), async (req, res) => {
       return res.status(401).json({ error: "No GitHub token found" });
     }
 
-    // const url = `https://api.github.com/user/repos?type=all&sort=pushed&direction=desc&page=${page}&per_page=${perPage}`;
-    const url = `https://api.github.com/repos/`;
+    const url = `https://api.github.com/user/repos?type=all&sort=pushed&direction=desc&page=${page}&per_page=${perPage}`;
 
     const response = await fetch(url, {
       headers: {
@@ -86,10 +85,12 @@ app.get("/github/repos", authMiddleware(auth), async (req, res) => {
         id: repo.id,
         name: repo.name,
         fullName: repo.full_name,
+        description: repo.description,
+        language: repo.language,
         private: repo.private,
-        url: repo.html_url,
+        url: repo.clone_url || repo.html_url,
         stars: repo.stargazers_count,
-        updatedAt: repo.updated_at,
+        updatedAt: repo.pushed_at || repo.updated_at,
       })),
       pagination: {
         page,

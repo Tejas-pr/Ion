@@ -9,18 +9,18 @@
     "schema": "prisma/schema.prisma"
   },
   "scripts": {
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:push": "prisma db push",
+    "db:migrate:deploy": "npx prisma migrate deploy",
+    "db:migrate:dev": "npx prisma migrate dev",
+    "db:push": "npx prisma db push",
     "db:seed": "tsx src/seed.ts",
     "dev": "tsup src/* --watch",
-    "format": "prisma format",
-    "generate": "prisma generate",
+    "format": "npx prisma format",
+    "generate": "npx prisma generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
     "db:record-build": "bun src/record-build.ts",
-    "studio": "prisma studio"
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.6.0",

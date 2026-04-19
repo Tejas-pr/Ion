@@ -49,7 +49,18 @@ const main = async () => {
             const projectPath = await getFileFromS3(`clones/${id}`, localOutputDir);
 
             // build the project
-            await buildProject(projectPath, id);
+            const { logs, duration } = await buildProject(projectPath, id);
+
+            // Record build metadata in the database
+            await prisma.build.create({
+                data: {
+                    status: "SUCCESS",
+                    duration: duration,
+                    commitHash: "N/A", 
+                    logs: logs,
+                    project: { connect: { projectId: id } }
+                }
+            });
 
             // Update status to DEPLOYING
             await prisma.project.update({

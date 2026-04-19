@@ -21,15 +21,15 @@ export function WorkspaceGithub() {
 
       const response = await getGithubRepos(pageNumber, 20);
       
-      const mappedRepos = response.map((repo: any) => ({
+      const mappedRepos = response.repos.map((repo: any) => ({
         id: repo.id,
         name: repo.name,
         description: repo.description,
         private: repo.private,
-        stars: repo.stargazers_count,
+        stars: repo.stars,
         language: repo.language,
-        updatedAt: repo.pushed_at || repo.updated_at,
-        url: repo.clone_url,
+        updatedAt: repo.updatedAt,
+        url: repo.url,
       }));
 
       setRepositories(prev => {
@@ -39,8 +39,8 @@ export function WorkspaceGithub() {
       });
 
 
-      // Simple check: if we got exactly the requested per-page amount, assume there's more.
-      setHasMore(mappedRepos.length === 20);
+      // Use pagination info from backend if available, otherwise fallback to length check
+      setHasMore(response.pagination ? response.pagination.hasNextPage : mappedRepos.length === 20);
     } catch (error) {
       console.error("Failed to fetch GitHub repos:", error);
     } finally {
