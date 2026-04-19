@@ -46,7 +46,7 @@ To allow users to browse and deploy their repositories directly from the dashboa
 ---
 
 ## 🤖 Phase 2: The "Ion Bot" AI Agent
-*Status: Planned ⚪*
+*Status: In Progress 🟡*
 
 A conversational interface that manages deployments.
 
@@ -56,6 +56,7 @@ A conversational interface that manages deployments.
 - **Config**: 
   - Use `streamText` from `ai` package.
   - Support `groq` or `ollama` for free/local usage.
+  - use free online models from google gemini.
 - **Tools (Function Calling)**:
   - `list_repos`: Returns the user's GitHub repos.
   - `get_deployment_status`: Queries Redis/DB for a project's state.
