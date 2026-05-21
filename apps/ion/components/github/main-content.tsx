@@ -55,12 +55,12 @@ export function MainContent({
   };
 
   return (
-    <div className="min-h-screen bg-black text-white w-full">
+    <div className="flex-1 overflow-y-auto bg-background text-foreground w-full">
       {/* Header Section */}
-      <div className="border-b border-neutral-800 p-6">
+      <div className="border-b border-border p-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold mb-1">Import Git Repository</h1>
-          <p className="text-neutral-400 text-sm">
+          <p className="text-muted-foreground text-sm">
             Select a repository to import into your project
           </p>
         </div>
@@ -72,19 +72,19 @@ export function MainContent({
           {/* Search Bar */}
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-500 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-neutral-900 border-neutral-800 text-white placeholder-neutral-500 h-9 focus:border-neutral-700 focus:bg-neutral-800"
+                className="pl-10 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground h-9 focus:border-ring focus:bg-background"
               />
             </div>
           </div>
 
           {/* Repositories List */}
-          <div className="space-y-0 border border-neutral-800 rounded-lg overflow-hidden">
+          <div className="space-y-0 border border-border rounded-lg overflow-hidden">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
@@ -110,47 +110,47 @@ export function MainContent({
               </div>
             ) : (
               <>
-                <div className="divide-y divide-neutral-800">
+                <div className="divide-y divide-border">
                   {filteredRepos.map((repo) => (
                     <div
                       key={repo.id}
-                      className="flex items-center justify-between gap-4 p-4 hover:bg-neutral-900 transition-colors"
+                      className="flex items-center justify-between gap-4 p-4 hover:bg-muted/50 transition-colors"
                     >
                       {/* Left Content */}
                       <div className="flex-1 min-w-0 flex items-start gap-3">
                         {/* Icon */}
                         <div className="flex-shrink-0 mt-1">
                           {repo.private ? (
-                            <Lock className="w-4 h-4 text-neutral-400" />
+                            <Lock className="w-4 h-4 text-muted-foreground" />
                           ) : (
-                            <Globe className="w-4 h-4 text-neutral-400" />
+                            <Globe className="w-4 h-4 text-muted-foreground" />
                           )}
                         </div>
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-sm font-medium text-white truncate">
+                            <h3 className="text-sm font-medium text-foreground truncate">
                               {repo.name}
                             </h3>
                             {repo.private && (
-                              <span className="text-xs text-neutral-500 flex-shrink-0">
+                              <span className="text-xs text-muted-foreground flex-shrink-0">
                                 Private
                               </span>
                             )}
                           </div>
 
                           {repo.description && (
-                            <p className="text-xs text-neutral-400 line-clamp-1 mb-2">
+                            <p className="text-xs text-muted-foreground line-clamp-1 mb-2">
                               {repo.description}
                             </p>
                           )}
 
                           {/* Meta */}
-                          <div className="flex items-center gap-4 text-xs text-neutral-500">
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             {repo.language && (
                               <span className="flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"></span>
                                 {repo.language}
                               </span>
                             )}
@@ -169,7 +169,7 @@ export function MainContent({
                       {/* Import Button */}
                       <Button
                         onClick={() => handleImport(repo)}
-                        className="flex-shrink-0 h-8 px-4 bg-neutral-800 hover:bg-neutral-700 text-white text-sm border border-neutral-700 hover:border-neutral-600 transition-colors"
+                        className="flex-shrink-0 h-8 px-4 text-sm"
                         variant="outline"
                       >
                         Import
@@ -179,16 +179,16 @@ export function MainContent({
                 </div>
 
                 {hasMore && (
-                  <div className="p-4 border-t border-neutral-800 text-center">
+                  <div className="p-4 border-t border-border text-center">
                     <Button
                       onClick={onLoadMore}
                       disabled={isFetchingMore}
                       variant="ghost"
-                      className="text-sm text-neutral-400 hover:text-white"
+                      className="text-sm text-muted-foreground hover:text-foreground"
                     >
                       {isFetchingMore ? (
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
                           <span>Loading...</span>
                         </div>
                       ) : (
@@ -203,7 +203,7 @@ export function MainContent({
 
           {/* Footer Info */}
           {!isLoading && filteredRepos.length > 0 && (
-            <p className="text-xs text-neutral-500 mt-4">
+            <p className="text-xs text-muted-foreground mt-4">
               Showing {filteredRepos.length} repositories
             </p>
           )}
