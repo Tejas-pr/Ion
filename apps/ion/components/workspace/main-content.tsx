@@ -5,12 +5,15 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "./project-card";
 import { AddProjectModal } from "./add-project-modal";
-import { getWorkspaceDetails } from "@/api/api.service";
+import { getWorkspaceDetails, getCachedWorkspaceDetails } from "@/api/api.service";
 
 export function MainContent() {
-  const [projects, setProjects] = useState<any>([]);
+  const [projects, setProjects] = useState<any>(() => {
+    return getCachedWorkspaceDetails()?.projects || [];
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   useEffect(() => {
     fetchWorkspaceDetails();
