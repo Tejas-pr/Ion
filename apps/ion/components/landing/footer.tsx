@@ -36,17 +36,17 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-transparent border-t border-emerald-500/10 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-transparent border-t border-emerald-500/10 dark:border-white/10 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* CTA Section */}
-        <div className="mb-16 text-center space-y-4 pb-16 border-b border-emerald-500/10">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-950">
+        <div className="mb-16 text-center space-y-4 pb-16 border-b border-emerald-500/10 dark:border-white/10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-950 dark:text-white">
             Ready to get started?
           </h2>
-          <p className="text-gray-600 font-medium max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 font-medium max-w-2xl mx-auto">
             Join thousands of teams building the web with Ion.
           </p>
-          <Link href="/signup" className="inline-block mt-4 px-8 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-black transition-colors shadow-md shadow-emerald-950/15">
+          <Link href="/signup" className="inline-block mt-4 px-8 py-3 bg-gray-900 dark:bg-white text-white dark:text-black rounded-full font-semibold hover:bg-black dark:hover:bg-neutral-100 transition-colors shadow-md shadow-emerald-950/15 dark:shadow-emerald-500/5">
             Get Started for Free
           </Link>
         </div>
@@ -56,14 +56,14 @@ export default function Footer() {
           {/* Logo Column */}
           <div className="col-span-2 sm:col-span-1 space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 text-emerald-600">
+              <div className="w-8 h-8 text-emerald-600 dark:text-emerald-500">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
               </div>
-              <span className="font-bold text-black text-xl">Ion</span>
+              <span className="font-bold text-black dark:text-white text-xl">Ion</span>
             </div>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
               The complete platform to build, deploy, and scale the web.
             </p>
           </div>
@@ -71,13 +71,13 @@ export default function Footer() {
           {/* Links Columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="font-semibold text-gray-950 mb-4">{category}</h4>
+              <h4 className="font-semibold text-gray-950 dark:text-white mb-4">{category}</h4>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-gray-600 hover:text-emerald-700 font-medium transition-colors"
+                      className="text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition-colors"
                     >
                       {link.label}
                     </a>
@@ -89,8 +89,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Footer */}
-        <div className="border-t border-emerald-500/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500 font-medium">
+        <div className="border-t border-emerald-500/10 dark:border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
             © {new Date().getFullYear()} Ion. All rights reserved.
           </p>
 
@@ -102,7 +102,7 @@ export default function Footer() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-emerald-800 hover:text-emerald-950 bg-emerald-500/10 hover:bg-emerald-500/20 p-2 rounded-full transition-all duration-200"
+                  className="text-emerald-800 dark:text-emerald-300 hover:text-emerald-950 dark:hover:text-white bg-emerald-500/10 dark:bg-white/5 hover:bg-emerald-500/20 dark:hover:bg-white/10 p-2 rounded-full transition-all duration-200"
                   aria-label={link.label}
                 >
                   <Icon size={18} />
@@ -115,4 +115,5 @@ export default function Footer() {
     </footer>
   );
 }
+
 

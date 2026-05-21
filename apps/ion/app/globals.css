@@ -80,6 +80,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --landing-bg: radial-gradient(120% 120% at 50% 10%, #ffffff 40%, #e6fcf2 70%, #d1fae5 100%);
 }
 
 .dark {
@@ -114,6 +115,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --landing-bg: radial-gradient(120% 120% at 50% 10%, #000000 40%, #022c22 70%, #064e3b 100%);
 }
 
 @layer base {

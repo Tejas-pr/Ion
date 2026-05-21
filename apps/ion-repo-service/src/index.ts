@@ -86,10 +86,11 @@ app.get("/github/repos", authMiddleware(auth), async (req, res) => {
         name: repo.name,
         fullName: repo.full_name,
         description: repo.description,
-        language: repo.language,
         private: repo.private,
-        url: repo.clone_url || repo.html_url,
+        url: repo.clone_url,
+        htmlUrl: repo.html_url,
         stars: repo.stargazers_count,
+        language: repo.language,
         updatedAt: repo.pushed_at || repo.updated_at,
       })),
       pagination: {

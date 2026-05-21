@@ -3,44 +3,46 @@
 import React, { useEffect, useState } from "react";
 import { Sidebar } from "../workspace/sidebar";
 import { MainContent } from "./main-content";
-import { getGithubRepos, addNewProject } from "@/api/api.service";
+import { getGithubRepos, getCachedGithubRepos, addNewProject } from "@/api/api.service";
 import { useRouter } from "next/navigation";
 
 export function WorkspaceGithub() {
   const router = useRouter();
-  const [repositories, setRepositories] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [repositories, setRepositories] = useState<any[]>(() => {
+    return getCachedGithubRepos(1, 20)?.repos || [];
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    return !getCachedGithubRepos(1, 20);
+  });
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(() => {
+    return getCachedGithubRepos(1, 20)?.pagination?.hasNextPage ?? true;
+  });
 
   const fetchRepos = async (pageNumber: number) => {
     try {
-      if (pageNumber === 1) setIsLoading(true);
-      else setIsFetchingMore(true);
+      if (pageNumber === 1) {
+        // Only show spinner on first mount if cache is empty
+        if (!getCachedGithubRepos(1, 20)) {
+          setIsLoading(true);
+        }
+      } else {
+        setIsFetchingMore(true);
+      }
 
       const response = await getGithubRepos(pageNumber, 20);
-      
-      const mappedRepos = response.repos.map((repo: any) => ({
-        id: repo.id,
-        name: repo.name,
-        description: repo.description,
-        private: repo.private,
-        stars: repo.stars,
-        language: repo.language,
-        updatedAt: repo.updatedAt,
-        url: repo.url,
-      }));
+      const repos = response.repos ?? [];
+      const pagination = response.pagination ?? {};
 
       setRepositories(prev => {
-        const combined = pageNumber === 1 ? mappedRepos : [...prev, ...mappedRepos];
-        // Ensure uniqueness by repository ID
-        return Array.from(new Map(combined.map((repo: any) => [repo.id, repo ] ) ).values());
+        const combined = pageNumber === 1 ? repos : [...prev, ...repos];
+        // Deduplicate by ID in case of overlapping pages
+        return Array.from(new Map(combined.map((repo: any) => [repo.id, repo])).values());
       });
 
-
-      // Use pagination info from backend if available, otherwise fallback to length check
-      setHasMore(response.pagination ? response.pagination.hasNextPage : mappedRepos.length === 20);
+      // Use the server-side Link header result for reliable pagination
+      setHasMore(pagination.hasNextPage ?? false);
     } catch (error) {
       console.error("Failed to fetch GitHub repos:", error);
     } finally {
@@ -73,7 +75,7 @@ export function WorkspaceGithub() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-background">
+    <div className="flex flex-1 w-full bg-background overflow-hidden">
       <Sidebar />
       <MainContent
         repositories={repositories}

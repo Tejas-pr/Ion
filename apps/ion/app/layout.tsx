@@ -26,6 +26,8 @@ export const viewport = {
   maximumScale: 1,
 };
 
+import { NavbarWrapper } from "@/components/navbar-wrapper";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,10 +45,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <NavbarWrapper>{children}</NavbarWrapper>
           <ChatBot />
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
