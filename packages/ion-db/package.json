@@ -15,7 +15,7 @@
     "db:seed": "tsx src/seed.ts",
     "dev": "tsup src/* --watch",
     "format": "npx prisma format",
-    "generate": "cd ../.. && bun x prisma generate --schema=packages/ion-db/prisma/schema.prisma",
+    "generate": "node scripts/prepare-prisma.js && bunx prisma generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
