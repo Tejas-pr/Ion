@@ -25,16 +25,18 @@ export default function Header({ mobileMenuOpen, setMobileMenuOpen }: HeaderProp
     setMounted(true);
   }, []);
 
-  const navItems = session?.user 
+  const defaultNavItems = [
+    { label: 'Workspace', href: '/workspace' },
+    { label: 'From GitHub', href: '/github' },
+    { label: 'Log In', href: '/login' },
+  ];
+
+  const navItems = mounted && session?.user 
     ? [
         { label: 'Workspace', href: '/workspace' },
         { label: 'From GitHub', href: '/github' },
       ]
-    : [
-        { label: 'Workspace', href: '/workspace' },
-        { label: 'From GitHub', href: '/github' },
-        { label: 'Log In', href: '/login' },
-      ];
+    : defaultNavItems;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-black/70 backdrop-blur-md border-b border-emerald-500/10 dark:border-white/10">
@@ -156,7 +158,7 @@ export default function Header({ mobileMenuOpen, setMobileMenuOpen }: HeaderProp
               </Link>
             ))}
             
-            {session?.user ? (
+            {mounted && session?.user ? (
               <button 
                 className="flex w-full items-center justify-center gap-2 mt-4 px-4 py-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-full font-medium hover:bg-red-100 transition-colors text-sm" 
                 onClick={async () => {
