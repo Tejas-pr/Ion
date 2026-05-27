@@ -15,7 +15,7 @@
     "db:seed": "tsx src/seed.ts",
     "dev": "tsup src/* --watch",
     "format": "npx prisma format",
-    "generate": "node scripts/prepare-prisma.js && node ../../node_modules/prisma/build/index.js generate",
+    "generate": "npx prisma generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
