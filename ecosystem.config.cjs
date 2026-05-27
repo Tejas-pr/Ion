@@ -1,3 +1,14 @@
+const fs = require('fs');
+const dotenv = require('dotenv');
+
+// Load environment variables from the root .env or apps/ion/.env
+let envConfig = {};
+if (fs.existsSync('./.env')) {
+  envConfig = dotenv.parse(fs.readFileSync('./.env'));
+} else if (fs.existsSync('./apps/ion/.env')) {
+  envConfig = dotenv.parse(fs.readFileSync('./apps/ion/.env'));
+}
+
 module.exports = {
   apps: [
     {
@@ -7,6 +18,7 @@ module.exports = {
       cwd: "./apps/ion-request-service",
       env: {
         NODE_ENV: "production",
+        ...envConfig
       }
     },
     {
@@ -16,6 +28,7 @@ module.exports = {
       cwd: "./apps/ion-repo-service",
       env: {
         NODE_ENV: "production",
+        ...envConfig
       }
     },
     {
@@ -25,6 +38,7 @@ module.exports = {
       cwd: "./apps/ion-websocket",
       env: {
         NODE_ENV: "production",
+        ...envConfig
       }
     },
     {
@@ -34,6 +48,7 @@ module.exports = {
       cwd: "./apps/ion-deployment-service",
       env: {
         NODE_ENV: "production",
+        ...envConfig
       }
     }
   ]
