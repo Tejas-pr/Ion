@@ -5,6 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_build_only",
   baseURL,
   trustedOrigins: ["http://localhost:3000", "http://localhost:3002", "http://localhost:3003", "http://localhost:8081", "http://192.168.0.64:3000", "http://192.168.0.64:3002", "http://192.168.0.64:3003"],
   database: prismaAdapter(prisma, {

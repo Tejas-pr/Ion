@@ -6,21 +6,32 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const client = createClient({
     url: redisUrl
 });
-await client.connect();
+
+let isConnected = false;
+const getRedisClient = async () => {
+    if (!isConnected) {
+        await client.connect();
+        isConnected = true;
+    }
+    return client;
+};
 
 export const REDIS_QUEUE_NAME = process.env.REIDS_QUEUE_NAME || "ion-build-queue";
 
 export const LPUSH = async (key: string, value: string) => {
-    await client.lPush(key, value);
+    const c = await getRedisClient();
+    await c.lPush(key, value);
 }
 
 export const BRPPO = async (key: string, timeout: number = 0) => {
-    const res = await client.brPop(key, timeout);
+    const c = await getRedisClient();
+    const res = await c.brPop(key, timeout);
     return res;
 }
 
 export const PUBLISH = async (channel: string, message: string) => {
-    await client.publish(channel, message);
+    const c = await getRedisClient();
+    await c.publish(channel, message);
 }
 
 export const SUBSCRIBE = async (channel: string, callback: (message: string) => void) => {
